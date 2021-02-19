@@ -219,12 +219,12 @@ export async function UpdateKeycloakUserPassword(keycloakId: string, isTemporary
 export async function sendActionsEmail(userId: string) {
     // try {
         logInfo(`Admin authentication started for email`)
-        await kcAdminClient.auth({
-        clientId: 'portal',
-        grantType: 'password',
-        password: CONSTANTS.KEYCLOAK_ADMIN_PASSWORD,
-        username: CONSTANTS.KEYCLOAK_ADMIN_USERNAME,
-    })
+    //     await kcAdminClient.auth({
+    //     clientId: 'portal',
+    //     grantType: 'password',
+    //     password: CONSTANTS.KEYCLOAK_ADMIN_PASSWORD,
+    //     username: CONSTANTS.KEYCLOAK_ADMIN_USERNAME,
+    // })
         kcAdminClient.setConfig({
         realmName: CONSTANTS.KEYCLOAK_REALM,
     })

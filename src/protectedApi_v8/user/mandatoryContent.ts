@@ -5,6 +5,10 @@ import { CONSTANTS } from '../../utils/env'
 import { logError } from '../../utils/logger'
 import { ERROR } from '../../utils/message'
 
+import {
+    extractAuthorizationFromRequest
+} from '../../utils/requestExtract'
+
 const API_END_POINTS = {
     mandatoryContentStatus: `${CONSTANTS.SB_EXT_API_BASE_2}/v1/check/mandatoryContentStatus`,
 }
@@ -13,6 +17,8 @@ export const mandatoryContent = Router()
 
 mandatoryContent.get('/checkStatus', async (req, res) => {
     try {
+        const authorization = extractAuthorizationFromRequest(req)
+        const xAuth = authorization.split(' ')
         const rootOrgValue = req.headers.rootorg
         const orgValue = req.headers.org
         const widValue = req.headers.wid
@@ -27,6 +33,7 @@ mandatoryContent.get('/checkStatus', async (req, res) => {
                 org: orgValue,
                 rootOrg: rootOrgValue,
                 wid: widValue,
+                xAuthUser: xAuth[1],
             },
         })
         res.status(response.status).send(response.data)

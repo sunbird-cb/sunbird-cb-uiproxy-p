@@ -28,6 +28,9 @@ export function getSessionConfig(
 ): expressSession.SessionOptions {
   if (!sessionConfig) {
     sessionConfig = {
+      cookie: {
+        maxAge: CONSTANTS.KEYCLOAK_SESSION_TTL,
+      },
       resave: false,
       saveUninitialized: false,
       secret: '927yen45-i8j6-78uj-y8j6g9rf56hu',

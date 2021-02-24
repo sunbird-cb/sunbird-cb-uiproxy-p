@@ -4,6 +4,8 @@ import FormData from 'form-data'
 import { CONSTANTS } from '../utils/env'
 import {
   ilpProxyCreatorRoute,
+  proxyCreatorDiscussion,
+  proxyCreatorDiscussionCreate,
   proxyCreatorKnowledge,
   proxyCreatorLearner,
   proxyCreatorRoute,
@@ -104,34 +106,43 @@ proxiesV8.use(
 
 proxiesV8.use('/sunbirdigot/*',
   // tslint:disable-next-line: max-line-length
-  proxyCreatorSunbirdSearch(express.Router(), `https://igot-sunbird.idc.tarento.com/api/composite/v1/search`)
-)
-
-proxiesV8.use('/action/*',
-  proxyCreatorKnowledge(express.Router(), `http://knowledge-mw-service:5000`)
-)
-
-proxiesV8.use('/api/user/v2/read',
-  proxyCreatorToAppentUserId(express.Router(), `https://igot-sunbird.idc.tarento.com/api/user/v2/read/`)
+  proxyCreatorSunbirdSearch(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/composite/v1/search`)
 )
 
 proxiesV8.use('/content-progres/*',
   // tslint:disable-next-line: max-line-length
-  proxyCreatorSunbirdSearch(express.Router(), `https://igot-sunbird.idc.tarento.com/api/course/v1/content/state/update`)
+  proxyCreatorSunbirdSearch(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/v1/content/state/update`)
 )
 proxiesV8.use('/read/content-progres/*',
   // tslint:disable-next-line: max-line-length
-  proxyCreatorSunbirdSearch(express.Router(), `https://igot-sunbird.idc.tarento.com/api/course/v1/content/state/read`)
+  proxyCreatorSunbirdSearch(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/course/v1/content/state/read`)
+)
+
+proxiesV8.use('/api/user/v2/read',
+  proxyCreatorToAppentUserId(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v2/read/`)
+)
+
+proxiesV8.use('/action/*',
+  proxyCreatorKnowledge(express.Router(), `${CONSTANTS.KNOWLEDGE_MW_API_BASE}`)
 )
 
 proxiesV8.use('/learner/*',
   // tslint:disable-next-line: max-line-length
-  proxyCreatorLearner(express.Router(), `http://kong:8000`)
+  proxyCreatorLearner(express.Router(), `${CONSTANTS.KONG_API_BASE}`)
 )
 
 proxiesV8.use('/api/*',
   // tslint:disable-next-line: max-line-length
-  proxyCreatorSunbird(express.Router(), `http://kong:8000`)
+  proxyCreatorSunbird(express.Router(), `${CONSTANTS.KONG_API_BASE}`)
+)
+
+proxiesV8.use('/discussion/user/v1/create',
+  // tslint:disable-next-line: max-line-length
+  proxyCreatorDiscussionCreate(express.Router(), `${CONSTANTS.DISCUSSION_HUB_MIDDLEWARE}`)
+)
+proxiesV8.use('/discussion/*',
+  // tslint:disable-next-line: max-line-length
+  proxyCreatorDiscussion(express.Router(), `${CONSTANTS.DISCUSSION_HUB_MIDDLEWARE}`)
 )
 
 function removePrefix(prefix: string, s: string) {

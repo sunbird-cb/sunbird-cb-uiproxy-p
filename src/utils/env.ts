@@ -114,12 +114,6 @@ export const CONSTANTS = {
   USER_DETAILS_API_BASE: env.USER_DETAILS_API_BASE || env.SB_EXT_API_BASE_2,
   USER_PROFILE_API_BASE: env.USER_PROFILE_API_BASE || 'http://localhost:3004',
   USER_SUNBIRD_DETAILS_API_BASE: 'https://igot-sunbird.idc.tarento.com',
-  X_AUTH_USER: 'X-Authenticated-User-Token',
-  CONTENT_TYPE: 'Content-Type',
-  CONTENT_TYPE_VALUE: 'application/json',
-  AUTHORIZATION: 'Authorization',
-  X_APP_ID: 'X-App-Id',
-  X_APP_ID_VALUE: 'sunbird.portal',
   USER_BULK_UPLOAD_DIR: env.USER_BULK_UPLOAD_DIR,
   USE_SERVING_HOST_COUNTER: env.USE_SERVING_HOST_COUNTER,
   VIEWER_PLUGIN_RDBMS_API_BASE:
@@ -140,6 +134,7 @@ export const CONSTANTS = {
   SCORING_SERVICE_API_BASE: env.SCORING_SERVICE_API_BASE || 'http://localhost:7014',
   // tslint:disable-next-line:max-line-length
   SB_API_KEY: env.SB_API_KEY || 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRekw4VVA1dUtqUFdaZVpMd1ZtTFJvNHdqWTg2a2FrcSJ9.TPjV0xLacSbp3FbJ7XeqHoKFN35Rl4YHx3DZNN9pm0o',
+  LEARNER_SERVICE_API_BASE: env.LEARNER_SERVICE_API_BASE || 'http://learner-service:9000',
 }
 
 export const RESTRICTED_PYTHON_STMT: string[] = process.env.RESTRICTED_CHARACTERS

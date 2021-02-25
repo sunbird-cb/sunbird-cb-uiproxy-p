@@ -134,20 +134,6 @@ export function proxyCreatorDiscussion(route: Router, targetUrl: string, _timeou
   return route
 }
 
-export function proxyCreatorDiscussionCreate(route: Router, targetUrl: string, _timeout = 10000): Router {
-  route.all('/*', (req, res) => {
-    // tslint:disable-next-line: no-console
-    console.log('REQ_URL_ORIGINAL proxyCreatorDiscussionCreate', req.originalUrl)
-    const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
-    discussProxy.web(req, res, {
-      changeOrigin: true,
-      ignorePath: true,
-      target: targetUrl + url,
-    })
-  })
-  return route
-}
-
 export function proxyCreatorKnowledge(route: Router, targetUrl: string, _timeout = 10000): Router {
   route.all('/*', (req, res) => {
     const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)

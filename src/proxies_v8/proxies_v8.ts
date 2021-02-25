@@ -5,7 +5,6 @@ import { CONSTANTS } from '../utils/env'
 import {
   ilpProxyCreatorRoute,
   proxyCreatorDiscussion,
-  proxyCreatorDiscussionCreate,
   proxyCreatorKnowledge,
   proxyCreatorLearner,
   proxyCreatorRoute,
@@ -138,7 +137,7 @@ proxiesV8.use('/api/*',
 
 proxiesV8.use('/discussion/user/v1/create',
   // tslint:disable-next-line: max-line-length
-  proxyCreatorDiscussionCreate(express.Router(), `${CONSTANTS.DISCUSSION_HUB_MIDDLEWARE}`)
+  proxyCreatorDiscussion(express.Router(), `${CONSTANTS.DISCUSSION_HUB_MIDDLEWARE}`)
 )
 proxiesV8.use('/discussion/*',
   // tslint:disable-next-line: max-line-length

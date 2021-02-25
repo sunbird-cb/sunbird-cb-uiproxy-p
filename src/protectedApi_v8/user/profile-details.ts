@@ -231,9 +231,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
                     primaryEmail: sbemail_,
                     surname: sblastName_,
                 }
-                const userRegistry: IUser = {
-                    personalDetails: personalDetailsRegistry,
-                }
+                const userRegistry = getUserRegistry(personalDetailsRegistry)
                 const userRegistryResponse = await axios({
                     ...axiosRequestConfig,
                     data: userRegistry,
@@ -259,3 +257,50 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
         res.status((err && err.response && err.response.status) || 500).send(err)
     }
 })
+
+function getUserRegistry(personalDetailsRegistry:IPersonalDetails) {
+    let userRegistry = {
+        personalDetails: personalDetailsRegistry,
+        professionalDetails: [
+            {
+                name: "",
+            }
+        ],
+        academics: [
+            {
+                nameOfQualification: "",
+                yearOfPassing: "",
+                nameOfInstitute: "",
+                type: "X_STANDARD"
+            },
+            {
+                nameOfQualification: "",
+                yearOfPassing: "",
+                nameOfInstitute: "",
+                type: "XII_STANDARD"
+            }
+        ],
+        interests: {
+            hobbies: [],
+            professional: []
+        },
+        skills: {
+            certificateDetails: "",
+            additionalSkills: ""
+        },
+        employmentDetails: {
+            departmentName: "",
+            officialPostalAddress: "",
+            employeeCode: "",
+            allotmentYearOfService: "",
+            payType: "",
+            civilListNo: "",
+            dojOfService: "",
+            service: "",
+            pinCode: "",
+            cadre: ""
+        }
+    }
+
+    return userRegistry
+}

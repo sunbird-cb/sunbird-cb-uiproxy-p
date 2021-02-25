@@ -258,49 +258,48 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
     }
 })
 
-function getUserRegistry(personalDetailsRegistry:IPersonalDetails) {
-    let userRegistry = {
+function getUserRegistry(personalDetailsRegistry: IPersonalDetails) {
+    const userRegistry = {
+        academics: [
+            {
+                nameOfInstitute: '',
+                nameOfQualification: '',
+                type: 'X_STANDARD',
+                yearOfPassing: '',
+            },
+            {
+                nameOfInstitute: '',
+                nameOfQualification: '',
+                type: 'XII_STANDARD',
+                yearOfPassing: '',
+            },
+        ],
+        employmentDetails: {
+            allotmentYearOfService: '',
+            cadre: '',
+            civilListNo: '',
+            departmentName: '',
+            dojOfService: '',
+            employeeCode: '',
+            officialPostalAddress: '',
+            service: '',
+            payType: '',
+            pinCode: '',
+        },
+        interests: {
+            hobbies: [],
+            professional: [],
+        },
         personalDetails: personalDetailsRegistry,
         professionalDetails: [
             {
-                name: "",
-            }
-        ],
-        academics: [
-            {
-                nameOfQualification: "",
-                yearOfPassing: "",
-                nameOfInstitute: "",
-                type: "X_STANDARD"
+                name: '',
             },
-            {
-                nameOfQualification: "",
-                yearOfPassing: "",
-                nameOfInstitute: "",
-                type: "XII_STANDARD"
-            }
         ],
-        interests: {
-            hobbies: [],
-            professional: []
-        },
         skills: {
-            certificateDetails: "",
-            additionalSkills: ""
+            additionalSkills: '',
+            certificateDetails: '',
         },
-        employmentDetails: {
-            departmentName: "",
-            officialPostalAddress: "",
-            employeeCode: "",
-            allotmentYearOfService: "",
-            payType: "",
-            civilListNo: "",
-            dojOfService: "",
-            service: "",
-            pinCode: "",
-            cadre: ""
-        }
     }
-
     return userRegistry
 }

@@ -2,7 +2,7 @@ import axios from 'axios'
 import { Router } from 'express'
 import * as fs from 'fs'
 import { axiosRequestConfig, axiosRequestConfigLong, axiosRequestConfigVeryLong } from '../../configs/request.config'
-import { IPersonalDetails, ISBUser, ISunbirdbUserResponse, IUser } from '../../models/user.model'
+import { IPersonalDetails, ISBUser, ISunbirdbUserResponse } from '../../models/user.model'
 import { CONSTANTS } from '../../utils/env'
 import { logError, logInfo } from '../../utils/logger'
 import { ERROR } from '../../utils/message'
@@ -259,7 +259,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
 })
 
 function getUserRegistry(personalDetailsRegistry: IPersonalDetails) {
-    const userRegistry = {
+    return {
         academics: [
             {
                 nameOfInstitute: '',
@@ -282,9 +282,9 @@ function getUserRegistry(personalDetailsRegistry: IPersonalDetails) {
             dojOfService: '',
             employeeCode: '',
             officialPostalAddress: '',
-            service: '',
             payType: '',
             pinCode: '',
+            service: '',
         },
         interests: {
             hobbies: [],
@@ -301,5 +301,4 @@ function getUserRegistry(personalDetailsRegistry: IPersonalDetails) {
             certificateDetails: '',
         },
     }
-    return userRegistry
 }

@@ -7,33 +7,27 @@ import { CONSTANTS } from '../../utils/env'
 import { logError, logInfo } from '../../utils/logger'
 import { ERROR } from '../../utils/message'
 import {
-    extractAuthorizationFromRequest, extractRootOrgFromRequest,
+    extractRootOrgFromRequest,
     extractUserIdFromRequest
 } from '../../utils/requestExtract'
 
 const API_END_POINTS = {
+    createOSUserRegistry: `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/create/profile?userId=`,
+    createSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/v1/user/signup`,
     createUserRegistry: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/createUserRegistry`,
     getMasterLanguages: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getMasterLanguages`,
     getMasterNationalities: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getMasterNationalities`,
+    getOSUserRegistryById: (userId: string) => `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/search/profile?userId=${userId}`,
     getProfilePageMeta: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getProfilePageMeta`,
     getUserRegistry: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getUserRegistry`,
     getUserRegistryById: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getUserRegistryById`,
-    setUserProfileStatus: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/setUserProfileStatus`,
-    userProfileStatus: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/userProfileStatus`,
     // tslint:disable-next-line: object-literal-sort-keys
     migrateRegistry: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/migrateRegistry`,
-    createSb: `${CONSTANTS.USER_SUNBIRD_DETAILS_API_BASE}/api/user/v1/create`,
-    searchSb: `${CONSTANTS.USER_SUNBIRD_DETAILS_API_BASE}/api/user/v1/search`,
+    searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
+    setUserProfileStatus: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/setUserProfileStatus`,
+    updateOSUserRegistry: (userId: string) => `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/update/profile?userId=${userId}`,
+    userProfileStatus: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/userProfileStatus`,
 }
-
-const xAuthUser = `${CONSTANTS.X_AUTH_USER}`
-const contentType = `${CONSTANTS.CONTENT_TYPE}`
-const contentTypeValue = `${CONSTANTS.CONTENT_TYPE_VALUE}`
-const authorizationHeader = `${CONSTANTS.AUTHORIZATION}`
-const xAppId = `${CONSTANTS.X_APP_ID}`
-const xAppIdVAlue = `${CONSTANTS.X_APP_ID_VALUE}`
-const createUserRegistryApi = `${CONSTANTS.USER_SUNBIRD_DETAILS_API_BASE}/apis/protected/v8/user/profileRegistry/createUserRegistryV2`
-const userPassword = 'Test.1234'
 
 export async function getUserProfileStatus(wid: string) {
     try {
@@ -204,22 +198,14 @@ profileDeatailsApi.get('/migrateRegistry', async (req, res) => {
 
 profileDeatailsApi.post('/createUser', async (req, res) => {
     try {
-        const authorization = extractAuthorizationFromRequest(req)
-        const xAuth = authorization.split(' ')
-        axios.defaults.headers.common[xAuthUser] = xAuth[1]
-        axios.defaults.headers.common[authorizationHeader] = `${CONSTANTS.SB_API_KEY}`
-        axios.defaults.headers.common[contentType] = contentTypeValue
-        axios.defaults.headers.common[xAppId] = xAppIdVAlue
         const sbemail_ = req.body.personalDetails.email
         const sbemailVerified_ = true
         const sbfirstName_ = req.body.personalDetails.firstName
         const sblastName_ = req.body.personalDetails.lastName
         const sbchannel_ = extractRootOrgFromRequest(req)
-        const extractUserName = req.body.personalDetails.userName
-        const password_ = userPassword
         const searchresponse = await axios({
             ...axiosRequestConfig,
-            data: { request: { query: '', filters: { userName: extractUserName.toLowerCase() } } },
+            data: { request: { query: '', filters: { email: sbemail_.toLowerCase() } } },
             method: 'POST',
             url: API_END_POINTS.searchSb,
         })
@@ -228,7 +214,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
         } else {
             const sbUserProfile: Partial<ISBUser> = {
                 channel: sbchannel_, email: sbemail_, emailVerified: sbemailVerified_, firstName: sbfirstName_,
-                lastName: sblastName_, password: password_, userName: extractUserName,
+                lastName: sblastName_,
             }
             const response = await axios({
                 ...axiosRequestConfig,
@@ -239,39 +225,35 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
             if (response.data.responseCode === 'CLIENT_ERROR') {
                 res.status(400).send('Not able to create User in SunBird')
             } else {
+                const sbUserId = response.data.result.userId
                 const personalDetailsRegistry: IPersonalDetails = {
                     firstname: sbfirstName_,
                     primaryEmail: sbemail_,
                     surname: sblastName_,
-                    username: extractUserName,
                 }
                 const userRegistry: IUser = {
                     personalDetails: personalDetailsRegistry,
                 }
-                const sBuserId = response.data.result.userId
                 const userRegistryResponse = await axios({
                     ...axiosRequestConfig,
                     data: userRegistry,
                     headers: {
-                        Authorization: authorization,
-                        wid: sBuserId,
+                        wid: sbUserId,
                     },
                     method: 'POST',
-                    url: `${createUserRegistryApi}/${sBuserId}`,
+                    url: `${API_END_POINTS.createOSUserRegistry}/${sbUserId}`,
                 })
                 if (userRegistryResponse.data === null) {
                     res.status(500).send('Not able to create User Registry in Opensaber')
                 } else {
                     const sbUserProfileResponse: Partial<ISunbirdbUserResponse> = {
                         email: sbemail_, firstName: sbfirstName_, lastName: sblastName_,
-                        userId: sBuserId,
+                        userId: sbUserId,
                     }
                     res.send(sbUserProfileResponse)
                 }
-
             }
         }
-
     } catch (err) {
         logError('ERROR CREATING USER >', err)
         res.status((err && err.response && err.response.status) || 500).send(err)

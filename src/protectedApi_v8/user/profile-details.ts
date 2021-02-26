@@ -210,7 +210,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
             url: API_END_POINTS.searchSb,
         })
         if (searchresponse.data.result.response.count > 0) {
-            res.status(400).send('UserName Already Exist')
+            res.status(400).send('Email address already exist')
         } else {
             const sbUserProfile: Partial<ISBUser> = {
                 channel: sbchannel_, email: sbemail_, emailVerified: sbemailVerified_, firstName: sbfirstName_,

@@ -197,6 +197,11 @@ portalApi.patch('/cbp/deptAction/userrole', async (req, res) => {
     updateUserRole(cbpPortal, req, res)
 })
 
+// ------------------ FRAC APIs ----------------------
+portalApi.get('/frac/mydepartment', async (req, res) => {
+    getMyDepartment('frac', req, res)
+})
+
 // ------------------ Role APIs ----------------------
 portalApi.get('/deptRole', async (req, res) => {
     try {

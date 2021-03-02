@@ -36,7 +36,7 @@ proxiesV8.post('/upload/*', (req, res) => {
       {
         headers: {
           // tslint:disable-next-line:max-line-length
-          Authorization: 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRekw4VVA1dUtqUFdaZVpMd1ZtTFJvNHdqWTg2a2FrcSJ9.TPjV0xLacSbp3FbJ7XeqHoKFN35Rl4YHx3DZNN9pm0o',
+          Authorization: CONSTANTS.SB_API_KEY,
           org: 'dopt',
           rootorg: 'igot',
           'x-authenticated-user-token': extractUserToken(req),

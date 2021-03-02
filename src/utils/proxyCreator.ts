@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { createProxyServer } from 'http-proxy'
 import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtract'
+import { CONSTANTS } from './env'
 import { logInfo } from './logger'
 
 const proxyCreator = (timeout = 10000) => createProxyServer({
@@ -14,7 +15,7 @@ const PROXY_SLUG = '/proxies/v8'
 proxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) => {
   proxyReq.setHeader('X-Channel-Id', '0131397178949058560')
   // tslint:disable-next-line: max-line-length
-  proxyReq.setHeader('Authorization', 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRekw4VVA1dUtqUFdaZVpMd1ZtTFJvNHdqWTg2a2FrcSJ9.TPjV0xLacSbp3FbJ7XeqHoKFN35Rl4YHx3DZNN9pm0o')
+  proxyReq.setHeader('Authorization', CONSTANTS.SB_API_KEY)
   proxyReq.setHeader('x-authenticated-user-token', extractUserToken(req))
   proxyReq.setHeader('x-authenticated-userid', extractUserIdFromRequest(req))
   // tslint:disable-next-line: no-console

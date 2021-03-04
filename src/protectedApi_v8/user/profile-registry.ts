@@ -343,10 +343,13 @@ profileRegistryApi.post('/createUserRegistryV2/:userId', async (req, res) => {
 })
 
 export async function getProfileStatus(userId: string) {
+  logInfo('Calling..... Profile Status')
   try {
     const response = await axios.get(API_END_POINTS.getUserRegistryById(userId), {
       ...axiosRequestConfig,
     })
+    logInfo('Got Response from registery')
+    logInfo(JSON.stringify(response))
     const userProfileResult = response.data.result.UserProfile
     if ((typeof userProfileResult !== 'undefined' && userProfileResult.length > 0) && (userId === userProfileResult[0].userId)) {
       let profileMatch = true

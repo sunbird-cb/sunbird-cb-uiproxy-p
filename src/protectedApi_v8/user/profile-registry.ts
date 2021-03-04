@@ -16,6 +16,11 @@ const API_END_POINTS = {
     `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/update/workflow/profile?userId=${userId}`,
 }
 
+const profileStatusCheckConfig = {
+  personalDetails: ['firstname', 'surname', 'dob', 'nationality', 'domicileMedium', 'gender', 'maritalStatus',
+    'category', 'mobile', 'primaryEmail', 'postalAddress', 'pincode'],
+}
+
 const ERROR_MESSAGE_CREATE_REGISTRY = 'ERROR CREATING USER REGISTRY >'
 
 export const profileRegistryApi = Router()
@@ -344,10 +349,21 @@ export async function getProfileStatus(userId: string) {
     })
     const userProfileResult = response.data.result.UserProfile
     if ((typeof userProfileResult !== 'undefined' && userProfileResult.length > 0) && (userId === userProfileResult[0].userId)) {
-      return true
+      let profileMatch = true
+      const profileData = userProfileResult[0]
+      Object.keys(profileStatusCheckConfig).forEach((key) => {
+          const keyData = profileData[key]
+          for (const iterator of profileStatusCheckConfig[key]) {
+            logInfo(iterator + '  ' + keyData[iterator])
+            if ((!profileData[key] || !keyData[iterator])) {
+              profileMatch = false
+              break
+            }
+          }
+      })
+      return profileMatch
     }
     return false
-
   } catch (error) {
     logError('ERROR WHILE FETCHING THE USER DETAILS FROM REGISTERY --> ', error)
     return false

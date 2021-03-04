@@ -349,8 +349,10 @@ export async function getProfileStatus(userId: string) {
       ...axiosRequestConfig,
     })
     logInfo('Got Response from registery')
-    logInfo(JSON.stringify(response))
     const userProfileResult = response.data.result.UserProfile
+    logInfo(userProfileResult)
+    logInfo(userProfileResult.length)
+    logInfo(userId + '---------' + userProfileResult[0].userId)
     if ((typeof userProfileResult !== 'undefined' && userProfileResult.length > 0) && (userId === userProfileResult[0].userId)) {
       let profileMatch = true
       const profileData = userProfileResult[0]

@@ -126,7 +126,7 @@ proxiesV8.use([
   '/action/questionset/v1/*',
   '/action/question/v1/*',
   '/action/object/category/definition/v1/*',
-], 
+],
   proxyCreatorQML(express.Router(), `${CONSTANTS.KONG_API_BASE}`)
 )
 

@@ -7,6 +7,7 @@ import {
   proxyCreatorDiscussion,
   proxyCreatorKnowledge,
   proxyCreatorLearner,
+  proxyCreatorQML,
   proxyCreatorRoute,
   proxyCreatorSunbird,
   proxyCreatorSunbirdSearch,
@@ -121,6 +122,14 @@ proxiesV8.use('/api/user/v2/read',
   proxyCreatorToAppentUserId(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v2/read/`)
 )
 
+proxiesV8.use([
+  '/action/questionset/v1/*',
+  '/action/question/v1/*',
+  '/action/object/category/definition/v1/*',
+], 
+  proxyCreatorQML(express.Router(), `${CONSTANTS.KONG_API_BASE}`)
+)
+
 proxiesV8.use('/action/*',
   proxyCreatorKnowledge(express.Router(), `${CONSTANTS.KNOWLEDGE_MW_API_BASE}`)
 )
@@ -131,6 +140,11 @@ proxiesV8.use('/learner/*',
 )
 
 proxiesV8.use('/api/*',
+  // tslint:disable-next-line: max-line-length
+  proxyCreatorSunbird(express.Router(), `${CONSTANTS.KONG_API_BASE}`)
+)
+
+proxiesV8.use('/assets/*',
   // tslint:disable-next-line: max-line-length
   proxyCreatorSunbird(express.Router(), `${CONSTANTS.KONG_API_BASE}`)
 )

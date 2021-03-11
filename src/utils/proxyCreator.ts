@@ -151,7 +151,7 @@ export function proxyCreatorKnowledge(route: Router, targetUrl: string, _timeout
 
 export function proxyCreatorQML(route: Router, targetUrl: string, _timeout = 10000): Router {
   route.all('/*', (req, res) => {
-    const originalUrl = req.originalUrl.replace('/action/', '/api/')
+    const originalUrl = req.originalUrl.replace('/action/', '/')
     const url = removePrefix(`${PROXY_SLUG}`, originalUrl)
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorQML', targetUrl + url)

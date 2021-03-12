@@ -5,6 +5,7 @@ import { CONSTANTS } from '../utils/env'
 import {
   ilpProxyCreatorRoute,
   proxyCreatorDiscussion,
+  proxyCreatorFramework,
   proxyCreatorKnowledge,
   proxyCreatorLearner,
   proxyCreatorQML,
@@ -137,6 +138,11 @@ proxiesV8.use('/action/*',
 proxiesV8.use('/learner/*',
   // tslint:disable-next-line: max-line-length
   proxyCreatorLearner(express.Router(), `${CONSTANTS.KONG_API_BASE}`)
+)
+
+proxiesV8.use('/api/framework/*',
+  // tslint:disable-next-line: max-line-length
+  proxyCreatorFramework(express.Router(), `${CONSTANTS.KONG_API_BASE}`)
 )
 
 proxiesV8.use('/api/*',

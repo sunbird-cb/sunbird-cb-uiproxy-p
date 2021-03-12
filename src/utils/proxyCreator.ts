@@ -106,6 +106,21 @@ export function proxyCreatorLearner(route: Router, targetUrl: string, _timeout =
   return route
 }
 
+export function proxyCreatorFramework(route: Router, targetUrl: string, _timeout = 10000): Router {
+  route.all('/*', (req, res) => {
+    const originalUrl = req.originalUrl.replace('/api/', '/')
+    const url = removePrefix(`${PROXY_SLUG}`, originalUrl)
+    // tslint:disable-next-line: no-console
+    console.log('REQ_URL_ORIGINAL proxyCreatorFramework', targetUrl + url)
+    proxy.web(req, res, {
+      changeOrigin: true,
+      ignorePath: true,
+      target: targetUrl + url,
+    })
+  })
+  return route
+}
+
 export function proxyCreatorSunbird(route: Router, targetUrl: string, _timeout = 10000): Router {
   route.all('/*', (req, res) => {
 

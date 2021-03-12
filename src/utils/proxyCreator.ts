@@ -149,21 +149,6 @@ export function proxyCreatorKnowledge(route: Router, targetUrl: string, _timeout
   return route
 }
 
-export function proxyCreatorQML(route: Router, targetUrl: string, _timeout = 10000): Router {
-  route.all('/*', (req, res) => {
-    const originalUrl = req.originalUrl.replace('/action/', '/')
-    const url = removePrefix(`${PROXY_SLUG}`, originalUrl)
-    // tslint:disable-next-line: no-console
-    console.log('REQ_URL_ORIGINAL proxyCreatorQML', targetUrl + url)
-    proxy.web(req, res, {
-      changeOrigin: true,
-      ignorePath: true,
-      target: targetUrl + url,
-    })
-  })
-  return route
-}
-
 export function proxyCreatorUpload(route: Router, targetUrl: string, _timeout = 10000): Router {
   route.all('/*', (req, res) => {
     const url = removePrefix(`${PROXY_SLUG}/action`, req.originalUrl)
@@ -208,6 +193,21 @@ export function proxyCreatorToAppentUserId(route: Router, targetUrl: string, _ti
       changeOrigin: true,
       ignorePath: true,
       target: targetUrl + userId[userId.length - 1],
+    })
+  })
+  return route
+}
+
+export function proxyCreatorQML(route: Router, targetUrl: string,  urlType: string, _timeout = 10000, ): Router {
+  route.all('/*', (req, res) => {
+    const originalUrl = req.originalUrl.replace(urlType, '/')
+    const url = removePrefix(`${PROXY_SLUG}`, originalUrl)
+    // tslint:disable-next-line: no-console
+    console.log('REQ_URL_ORIGINAL proxyCreatorQML', targetUrl + url)
+    proxy.web(req, res, {
+      changeOrigin: true,
+      ignorePath: true,
+      target: targetUrl + url,
     })
   })
   return route

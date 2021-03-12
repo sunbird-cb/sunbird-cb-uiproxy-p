@@ -141,7 +141,7 @@ proxiesV8.use('/learner/*',
 
 proxiesV8.use('/api/framework/*',
   // tslint:disable-next-line: max-line-length
-  proxyCreatorQML(express.Router(), `${CONSTANTS.KONG_API_BASE}`, '/api/')
+  proxyCreatorQML(express.Router(), `${CONSTANTS.KONG_API_BASE}`, '')
 )
 
 proxiesV8.use('/api/*',

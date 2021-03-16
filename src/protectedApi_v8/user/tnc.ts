@@ -4,7 +4,7 @@ import { axiosRequestConfig } from '../../configs/request.config'
 import { CONSTANTS } from '../../utils/env'
 import { logError } from '../../utils/logger'
 import { ERROR } from '../../utils/message'
-import { extractUserIdFromRequest, extractUserToken } from '../../utils/requestExtract'
+import { extractUserIdFromRequest} from '../../utils/requestExtract'
 const apiEndpoints = {
   acceptTnC: `${CONSTANTS.TNC_API_BASE}/v1/terms/accept`,
   sbacceptTnc: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v1/tnc/accept`,

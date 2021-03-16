@@ -212,6 +212,7 @@ protectedTnc.patch('/postprocessing', async (req, res) => {
 protectedTnc.get('/system/settings/:configName', async (req, res) => {
   try {
     const configName = req.params.configName
+    const userToken = String(req.header('Authorization')).replace('bearer ', '')
     if (!configName) {
       res.status(400).send('configuration name should not be empty!')
       return
@@ -220,7 +221,7 @@ protectedTnc.get('/system/settings/:configName', async (req, res) => {
       ...axiosRequestConfig,
       headers: {
         Authorization: CONSTANTS.SB_API_KEY,
-        'X-Authenticated-User-Token': extractUserToken(req),
+        'X-Authenticated-User-Token': userToken,
       },
   })
     res.send(response)
@@ -236,18 +237,19 @@ protectedTnc.get('/system/settings/:configName', async (req, res) => {
 
 protectedTnc.post('/sbacceptTnc', async (req, res) => {
   try {
-      const response = await axios.post(
+    const userToken = String(req.header('Authorization')).replace('bearer ', '')
+    const response = await axios.post(
         apiEndpoints.sbacceptTnc,
           req.body,
           {
               ...axiosRequestConfig,
               headers: {
                 Authorization: CONSTANTS.SB_API_KEY,
-                'X-Authenticated-User-Token': extractUserToken(req),
+                'X-Authenticated-User-Token': userToken,
               },
           }
       )
-      res.status(response.status).send(response.data)
+    res.status(response.status).send(response.data)
   } catch (err) {
       logError(err)
       res.status((err && err.response && err.response.status) || 500).send(

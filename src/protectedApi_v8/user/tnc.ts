@@ -233,13 +233,14 @@ protectedTnc.get('/system/settings/:configName', async (req, res) => {
 
 protectedTnc.post('/sbacceptTnc', async (req, res) => {
   try {
+    const userToken = String(req.header('Authorization')).replace('bearer ', '')
     const response = await axios.post(
         apiEndpoints.sbacceptTnc,
           req.body,
           {
               ...axiosRequestConfig,
               headers: {
-                'Content-Type' : 'application/json',
+                'X-Authenticated-User-Token': userToken,
               },
           }
       )

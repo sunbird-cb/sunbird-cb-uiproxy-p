@@ -7,8 +7,8 @@ import { ERROR } from '../../utils/message'
 import { extractUserIdFromRequest} from '../../utils/requestExtract'
 const apiEndpoints = {
   acceptTnC: `${CONSTANTS.TNC_API_BASE}/v1/terms/accept`,
-  sbacceptTnc: `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/user/v1/tnc/accept`,
-  systemConfigEndPoint: (configName: string) => `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/data/v1/system/settings/get/${configName}`,
+  sbacceptTnc: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/v1/user/tnc/accept`,
+  systemConfigEndPoint: (configName: string) => `${CONSTANTS.LEARNER_SERVICE_API_BASE}/v1/system/settings/get/${configName}`,
   tnc: `${CONSTANTS.TNC_API_BASE}/v1/latest/terms`,
   tncPostProcessing: (userId: string) =>
     `${CONSTANTS.SB_EXT_API_BASE}/v1/user/${userId}/postprocessing`,
@@ -212,19 +212,15 @@ protectedTnc.patch('/postprocessing', async (req, res) => {
 protectedTnc.get('/system/settings/:configName', async (req, res) => {
   try {
     const configName = req.params.configName
-    const userToken = String(req.header('Authorization')).replace('bearer ', '')
     if (!configName) {
       res.status(400).send('configuration name should not be empty!')
       return
     }
     const response = await axios.get(apiEndpoints.systemConfigEndPoint(configName), {
       ...axiosRequestConfig,
-      headers: {
-        Authorization: CONSTANTS.SB_API_KEY,
-        'X-Authenticated-User-Token': userToken,
-      },
+      headers: {},
   })
-  res.status(response.status).send(response.data)
+    res.status(response.status).send(response.data)
   } catch (err) {
     logError('Getting error while searching the system config', err)
     res
@@ -237,15 +233,13 @@ protectedTnc.get('/system/settings/:configName', async (req, res) => {
 
 protectedTnc.post('/sbacceptTnc', async (req, res) => {
   try {
-    const userToken = String(req.header('Authorization')).replace('bearer ', '')
     const response = await axios.post(
         apiEndpoints.sbacceptTnc,
           req.body,
           {
               ...axiosRequestConfig,
               headers: {
-                Authorization: CONSTANTS.SB_API_KEY,
-                'X-Authenticated-User-Token': userToken,
+                'Content-Type' : 'application/json',
               },
           }
       )

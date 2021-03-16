@@ -224,7 +224,7 @@ protectedTnc.get('/system/settings/:configName', async (req, res) => {
         'X-Authenticated-User-Token': userToken,
       },
   })
-    res.send(response)
+  res.status(response.status).send(response.data)
   } catch (err) {
     logError('Getting error while searching the system config', err)
     res

@@ -3,6 +3,7 @@ import express from 'express'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError } from '../utils/logger'
+import { extractUserIdFromRequest } from '../utils/requestExtract'
 
 export const portalApi = express.Router()
 
@@ -30,6 +31,7 @@ const API_END_POINTS = {
     spvUserRoleApi: `${CONSTANTS.SB_EXT_API_BASE_2}/portal/spv/userrole`,
     userRoleApi: (portalName: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/portal/${portalName}/userrole`,
     userRolesApi: (userId: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/portal/${userId}/roles`,
+    userStatusCheckApi: `${CONSTANTS.SB_EXT_API_BASE_2}/portal/isUserActive`,
 }
 
 const unknownError = 'Failed due to unknown reason'
@@ -371,5 +373,19 @@ export async function getRoles(userId: string) {
     } catch (error) {
         logError('ERROR WHILE FETCHING THE USER ROLES --> ', error)
         return []
+    }
+}
+
+export async function getUserStatus(userId: string) {
+    try {
+        const response = await axios.get(API_END_POINTS.userStatusCheckApi, {
+            ...axiosRequestConfig,
+            headers: {
+                userId,
+            },
+        })
+        return response.data
+    } catch (err) {
+        logError(failedToProcess + err)
     }
 }

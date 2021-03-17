@@ -8,7 +8,7 @@ import { ERROR } from '../../utils/message'
 import { extractUserIdFromRequest } from '../../utils/requestExtract'
 import { getUserByEmail } from '../discussionHub/users'
 import { createDiscussionHubUser } from '../discussionHub/writeApi'
-import { getRoles } from '../portal-v3'
+import { getRoles , getUserStatus} from '../portal-v3'
 import { getUserProfile } from './profile'
 import { getProfileStatus } from './profile-registry'
 
@@ -33,8 +33,10 @@ detailsApi.get('/', async (req, res) => {
     const tncStatus = true
     const roles = await getRoles(userId)
     const profileDetailsStatus = await getProfileStatus(userId)
+    const isActive = await getUserStatus(userId)
     res.json({
       group: [],
+      isActive,
       profileDetailsStatus,
       roles,
       tncStatus,

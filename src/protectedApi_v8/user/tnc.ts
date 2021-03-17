@@ -4,9 +4,11 @@ import { axiosRequestConfig } from '../../configs/request.config'
 import { CONSTANTS } from '../../utils/env'
 import { logError } from '../../utils/logger'
 import { ERROR } from '../../utils/message'
-import { extractUserIdFromRequest } from '../../utils/requestExtract'
+import { extractUserIdFromRequest} from '../../utils/requestExtract'
 const apiEndpoints = {
   acceptTnC: `${CONSTANTS.TNC_API_BASE}/v1/terms/accept`,
+  sbacceptTnc: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/v1/user/tnc/accept`,
+  systemConfigEndPoint: (configName: string) => `${CONSTANTS.LEARNER_SERVICE_API_BASE}/v1/system/settings/get/${configName}`,
   tnc: `${CONSTANTS.TNC_API_BASE}/v1/latest/terms`,
   tncPostProcessing: (userId: string) =>
     `${CONSTANTS.SB_EXT_API_BASE}/v1/user/${userId}/postprocessing`,
@@ -130,7 +132,7 @@ protectedTnc.get('/', async (req, res) => {
     res
       .status((err && err.response && err.response.status) || 500)
       .send((err && err.response && err.response.data) || {
-        error: 'Failed due to unknown reason',
+        error: GENERAL_ERROR_MSG,
       })
   }
 })
@@ -204,5 +206,51 @@ protectedTnc.patch('/postprocessing', async (req, res) => {
         error: GENERAL_ERROR_MSG,
       }
     )
+  }
+})
+
+protectedTnc.get('/system/settings/:configName', async (req, res) => {
+  try {
+    const configName = req.params.configName
+    if (!configName) {
+      res.status(400).send('configuration name should not be empty!')
+      return
+    }
+    const response = await axios.get(apiEndpoints.systemConfigEndPoint(configName), {
+      ...axiosRequestConfig,
+      headers: {},
+  })
+    res.status(response.status).send(response.data)
+  } catch (err) {
+    logError('Getting error while searching the system config', err)
+    res
+      .status((err && err.response && err.response.status) || 500)
+      .send((err && err.response && err.response.data) || {
+        error: GENERAL_ERROR_MSG,
+      })
+  }
+})
+
+protectedTnc.post('/sbacceptTnc', async (req, res) => {
+  try {
+    const userToken = String(req.header('Authorization')).replace('bearer ', '')
+    const response = await axios.post(
+        apiEndpoints.sbacceptTnc,
+          req.body,
+          {
+              ...axiosRequestConfig,
+              headers: {
+                'X-Authenticated-User-Token': userToken,
+              },
+          }
+      )
+    res.status(response.status).send(response.data)
+  } catch (err) {
+      logError(err)
+      res.status((err && err.response && err.response.status) || 500).send(
+          (err && err.response && err.response.data) || {
+              error: GENERAL_ERROR_MSG,
+          }
+      )
   }
 })

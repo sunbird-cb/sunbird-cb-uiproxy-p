@@ -79,7 +79,7 @@ workAllocationApi.post('/update', async (req, res) => {
 workAllocationApi.post('/userSearch', async (req, res) => {
     try {
         const response = await axios.post(
-            API_END_POINTS.updateAllocationEndPoint,
+            API_END_POINTS.getUsersEndPoint,
             req.body,
             {
                 ...axiosRequestConfig,

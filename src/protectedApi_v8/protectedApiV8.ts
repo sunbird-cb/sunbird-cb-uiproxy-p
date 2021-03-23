@@ -30,6 +30,7 @@ import { socialApi } from './social'
 import { trainingApi } from './training'
 import { translateApi } from './translate'
 import { user } from './user/user'
+import { workAllocationApi } from './workallocation'
 import { workflowHandlerApi } from './workflow-handler'
 
 export const protectedApiV8 = express.Router()
@@ -72,3 +73,4 @@ protectedApiV8.use('/portal', portalApi)
 protectedApiV8.use('/scroing', scoringApi)
 protectedApiV8.use('/workflowhandler', workflowHandlerApi)
 protectedApiV8.use('/roleactivity', roleActivityApi)
+protectedApiV8.use('/workallocation', workAllocationApi)

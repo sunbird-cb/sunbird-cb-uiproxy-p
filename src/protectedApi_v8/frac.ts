@@ -3,7 +3,6 @@ import { Router } from 'express'
 
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
-import { ERROR } from '../utils/message'
 
 const API_END_POINTS = {
     addDataNode: `${CONSTANTS.FRAC_API_BASE}/api/frac/addDataNode`,
@@ -30,17 +29,9 @@ fracApi.get('/getAllNodes/:type', async (req, res) => {
                 res.status(400).send('TYPE_IS_NOT_PROVIDED_OR_TYPE_IS_NOT_CONFIGURED!')
                 break
         }
-        const rootOrg = req.header('rootOrg')
-        const authToken = req.header('Authorization')
-        if (!rootOrg) {
-            res.status(400).send(ERROR.ERROR_NO_ORG_DATA)
-            return
-        }
         const response = await axios.get(apiEndPoint, {
             ...axiosRequestConfig,
-            headers: {
-                Authorization: authToken,
-            },
+            headers: req.headers,
         })
         res.status(response.status).send(response.data)
     } catch (err) {
@@ -54,12 +45,9 @@ fracApi.get('/getAllNodes/:type', async (req, res) => {
 
 fracApi.post('/addDataNode', async (req, res) => {
     try {
-        const authToken = req.header('Authorization')
         const response = await axios.post(API_END_POINTS.addDataNode, req.body, {
             ...axiosRequestConfig,
-            headers: {
-                Authorization: authToken,
-            },
+            headers: req.headers,
         })
         res.status(response.status).send(response.data)
     } catch (err) {
@@ -73,12 +61,9 @@ fracApi.post('/addDataNode', async (req, res) => {
 
 fracApi.post('/searchNodes', async (req, res) => {
     try {
-        const authToken = req.header('Authorization')
         const response = await axios.post(API_END_POINTS.searchNodes, req.body, {
             ...axiosRequestConfig,
-            headers: {
-                Authorization: authToken,
-            },
+            headers: req.headers,
         })
         res.status(response.status).send(response.data)
     } catch (err) {

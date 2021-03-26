@@ -145,7 +145,7 @@ portalApi.post(spvDeptPath, async (req, res) => {
         const xAuth = authorization.split(' ')
         const response = await axios.post(API_END_POINTS.deptApi(spvPortal), req.body, {
             ...axiosRequestConfig,
-            headers:{
+            headers: {
                 rootOrg: rootOrgValue,
                 wid: userId,
                 xAuthUser: xAuth[1],

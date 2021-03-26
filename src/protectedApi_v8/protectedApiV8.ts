@@ -15,6 +15,7 @@ import { deptApi } from './departments'
 import { discussionHubApi } from './discussionHub/discussionHub'
 import { externalEventsApi } from './event-external'
 import { eventsApi } from './events'
+import {  fracApi } from './frac'
 import { infyRadioApi } from './infyradio'
 import { knowledgeHubApi } from './khub'
 import { leaderBoardApi } from './leaderboard'
@@ -74,3 +75,4 @@ protectedApiV8.use('/scroing', scoringApi)
 protectedApiV8.use('/workflowhandler', workflowHandlerApi)
 protectedApiV8.use('/roleactivity', roleActivityApi)
 protectedApiV8.use('/workallocation', workAllocationApi)
+protectedApiV8.use('/frac', fracApi)

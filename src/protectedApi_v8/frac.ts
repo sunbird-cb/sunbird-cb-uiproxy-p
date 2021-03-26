@@ -27,7 +27,7 @@ fracApi.get('/getAllNodes/:type', async (req, res) => {
                 apiEndPoint = API_END_POINTS.getCompetencyArea
                 break
             default:
-                res.status(400).send('TYPE_IS_PROVIDED_OR_TYPE_IS_NOT_CONFIGURED')
+                res.status(400).send('TYPE_IS_NOT_PROVIDED_OR_TYPE_IS_NOT_CONFIGURED!')
                 break
         }
         const rootOrg = req.header('rootOrg')

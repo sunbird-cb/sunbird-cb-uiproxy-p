@@ -26,12 +26,14 @@ fracApi.get('/getAllNodes/:type', async (req, res) => {
                 apiEndPoint = API_END_POINTS.getCompetencyArea
                 break
             default:
-                res.status(400).send('TYPE_IS_NOT_PROVIDED_OR_TYPE_IS_NOT_CONFIGURED!')
+                res.status(400).send('TYPE_IS_NOT_PROVIDED_OR_TYPE_IS_NOT_CONFIGURED')
                 break
         }
         const response = await axios.get(apiEndPoint, {
             ...axiosRequestConfig,
-            headers: req.headers,
+            headers: {
+                Authorization: req.header('Authorization'),
+            },
         })
         res.status(response.status).send(response.data)
     } catch (err) {
@@ -47,7 +49,9 @@ fracApi.post('/addDataNode', async (req, res) => {
     try {
         const response = await axios.post(API_END_POINTS.addDataNode, req.body, {
             ...axiosRequestConfig,
-            headers: req.headers,
+            headers: {
+                Authorization: req.header('Authorization'),
+            },
         })
         res.status(response.status).send(response.data)
     } catch (err) {
@@ -63,7 +67,9 @@ fracApi.post('/searchNodes', async (req, res) => {
     try {
         const response = await axios.post(API_END_POINTS.searchNodes, req.body, {
             ...axiosRequestConfig,
-            headers: req.headers,
+            headers: {
+                Authorization: req.header('Authorization'),
+            },
         })
         res.status(response.status).send(response.data)
     } catch (err) {

@@ -3,6 +3,9 @@ import express from 'express'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError } from '../utils/logger'
+import {
+    extractAuthorizationFromRequest
+} from '../utils/requestExtract'
 
 export const portalApi = express.Router()
 
@@ -137,9 +140,16 @@ portalApi.post(spvDeptPath, async (req, res) => {
             res.status(400).send(badRequest)
             return
         }
+        const rootOrgValue = req.headers.rootorg
+        const authorization = extractAuthorizationFromRequest(req)
+        const xAuth = authorization.split(' ')
         const response = await axios.post(API_END_POINTS.deptApi(spvPortal), req.body, {
             ...axiosRequestConfig,
-            headers: req.headers,
+            headers:{
+                rootOrg: rootOrgValue,
+                wid: userId,
+                xAuthUser: xAuth[1],
+            },
         })
         res.status(response.status).send(response.data)
     } catch (err) {

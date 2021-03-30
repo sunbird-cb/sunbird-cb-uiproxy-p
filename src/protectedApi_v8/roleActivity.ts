@@ -77,13 +77,6 @@ roleActivityApi.get('/:roleKey', async (req, res) => {
     }
 })
 
-function isMatches(roleName: string, roleKey: string) {
-    if (roleName.toLowerCase().startsWith(roleKey.toLowerCase())) {
-        return true
-    }
-    return false
-}
-
 export interface IRole {
     type: string,
     id: string,

@@ -1,6 +1,7 @@
 import { Router } from 'express'
 
 import { ERROR } from '../utils/message'
+import { logInfo } from '../utils/logger'
 
 import axios from 'axios'
 import { axiosRequestConfig } from '../configs/request.config'
@@ -51,7 +52,10 @@ roleActivityApi.get('/:roleKey', async (req, res) => {
                     type : 'ROLE',
                       },
                 ],
+                childCount : true,
+                childNodes: true
           }
+        logInfo('Req body========>', JSON.stringify(searchBody))
         const response = await axios.post(API_END_POINTS.searchNodes, searchBody, {
             ...axiosRequestConfig,
             headers: {
@@ -61,6 +65,7 @@ roleActivityApi.get('/:roleKey', async (req, res) => {
         const returnRoleList: IRole[] = []
         if (response.data && response.data.result) {
             const roleData = response.data.result.responseData
+            logInfo('Response data ========>', JSON.stringify(roleData))
             if (roleData) {
                 roleData.forEach((element: IFracRole) => {
                         returnRoleList.push(getRoles(element))
@@ -126,7 +131,6 @@ function getRoles(role: IFracRole): IRole {
         source: role.source,
         status: role.status,
         type: role.type,
-
     }
 
  } else {

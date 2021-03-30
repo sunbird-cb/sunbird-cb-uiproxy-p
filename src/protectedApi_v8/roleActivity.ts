@@ -65,13 +65,11 @@ roleActivityApi.get('/:roleKey', async (req, res) => {
         const returnRoleList: IRole[] = []
         const roleData = response.data.result.responseData
         logInfo('Response data ========>', JSON.stringify(roleData))
-        if (roleData) {
             if (roleData) {
                 roleData.forEach((element: IFracRole) => {
                         returnRoleList.push(getRoles(element))
                 })
             }
-          }
         res.status(200).send(returnRoleList)
     } catch (err) {
         res.status((err && err.response && err.response.status) || 500).send(

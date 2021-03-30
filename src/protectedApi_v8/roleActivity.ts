@@ -1,6 +1,6 @@
 import { Router } from 'express'
 
-import { logInfo } from '../utils/logger'
+import { logInfo, logError } from '../utils/logger'
 import { ERROR } from '../utils/message'
 
 import axios from 'axios'
@@ -64,14 +64,15 @@ roleActivityApi.get('/:roleKey', async (req, res) => {
         })
         const returnRoleList: IRole[] = []
         const roleData = response.data.result.responseData
-        logInfo('Response data ========>', JSON.stringify(roleData))
-            if (roleData) {
+        if ((typeof roleData !== 'undefined' && roleData.length > 0)) {
+            logInfo('Response data exists')
                 roleData.forEach((element: IFracRole) => {
                         returnRoleList.push(getRoles(element))
                 })
             }
         res.status(200).send(returnRoleList)
     } catch (err) {
+        logError('ERROR --> ', err)
         res.status((err && err.response && err.response.status) || 500).send(
             (err && err.response && err.response.data) || {
                 error: ERROR.GENERAL_ERR_MSG,

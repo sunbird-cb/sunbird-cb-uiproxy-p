@@ -9,7 +9,7 @@ import { CONSTANTS } from '../utils/env'
 export const roleActivityApi = Router()
 
 const API_END_POINTS = {
-    addDataNode: `${CONSTANTS.FRAC_API_BASE}/api/frac/addDataNode`,
+    searchNodes: `${CONSTANTS.FRAC_API_BASE}/api/frac/searchNodes`,
 }
 
 roleActivityApi.get('/', async (req, res) => {
@@ -52,7 +52,7 @@ roleActivityApi.get('/:roleKey', async (req, res) => {
                       },
                 ],
           }
-        const response = await axios.post(API_END_POINTS.addDataNode, searchBody, {
+        const response = await axios.post(API_END_POINTS.searchNodes, searchBody, {
             ...axiosRequestConfig,
             headers: {
                 Authorization: req.header('Authorization'),

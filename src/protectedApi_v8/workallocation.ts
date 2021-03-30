@@ -34,6 +34,7 @@ workAllocationApi.post('/add', async (req, res) => {
                 ...axiosRequestConfig,
                 headers: {
                     userId,
+                    Authorization: req.header('Authorization'),
                 },
             }
         )
@@ -62,6 +63,7 @@ workAllocationApi.post('/update', async (req, res) => {
                 ...axiosRequestConfig,
                 headers: {
                     userId,
+                    Authorization: req.header('Authorization'),
                 },
             }
         )

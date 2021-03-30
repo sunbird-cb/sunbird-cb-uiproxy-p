@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
-import { ERROR } from '../utils/message'
 import { logInfo } from '../utils/logger'
+import { ERROR } from '../utils/message'
 
 import axios from 'axios'
 import { axiosRequestConfig } from '../configs/request.config'
@@ -40,6 +40,8 @@ roleActivityApi.get('/:roleKey', async (req, res) => {
         }
         const roleKey = req.params.roleKey as string
         const searchBody = {
+            childCount : true,
+            childNodes: true,
             searches: [
               {
                 field : 'name',
@@ -51,9 +53,7 @@ roleActivityApi.get('/:roleKey', async (req, res) => {
                     keyword : 'VERIFIED',
                     type : 'ROLE',
                       },
-                ],
-                childCount : true,
-                childNodes: true
+                ] 
           }
         logInfo('Req body========>', JSON.stringify(searchBody))
         const response = await axios.post(API_END_POINTS.searchNodes, searchBody, {

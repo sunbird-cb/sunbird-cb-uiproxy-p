@@ -26,7 +26,7 @@ node() {
                 '''
         }
       
-              stage('SonarQube analysis') {
+  /*            stage('SonarQube analysis') {
                
                   sh 'cd $docker_file_path && npm install'
              
@@ -47,7 +47,7 @@ node() {
    					}
   
   }
-}
+}  */
 
             stage('docker-build') {
                 sh '''

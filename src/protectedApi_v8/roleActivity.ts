@@ -53,7 +53,7 @@ roleActivityApi.get('/:roleKey', async (req, res) => {
                     keyword : 'VERIFIED',
                     type : 'ROLE',
                       },
-                ] 
+                ],
           }
         logInfo('Req body========>', JSON.stringify(searchBody))
         const response = await axios.post(API_END_POINTS.searchNodes, searchBody, {
@@ -63,9 +63,9 @@ roleActivityApi.get('/:roleKey', async (req, res) => {
             },
         })
         const returnRoleList: IRole[] = []
-        if (response.data && response.data.result) {
-            const roleData = response.data.result.responseData
-            logInfo('Response data ========>', JSON.stringify(roleData))
+        const roleData = response.data.result.responseData
+        logInfo('Response data ========>', JSON.stringify(roleData))
+        if (roleData) {
             if (roleData) {
                 roleData.forEach((element: IFracRole) => {
                         returnRoleList.push(getRoles(element))

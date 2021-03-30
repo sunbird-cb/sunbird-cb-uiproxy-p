@@ -2,7 +2,15 @@ import { Router } from 'express'
 
 import { ERROR } from '../utils/message'
 
+import axios from 'axios'
+import { axiosRequestConfig } from '../configs/request.config'
+import { CONSTANTS } from '../utils/env'
+
 export const roleActivityApi = Router()
+
+const API_END_POINTS = {
+    addDataNode: `${CONSTANTS.FRAC_API_BASE}/api/frac/addDataNode`,
+}
 
 roleActivityApi.get('/', async (req, res) => {
     try {
@@ -30,13 +38,35 @@ roleActivityApi.get('/:roleKey', async (req, res) => {
             return
         }
         const roleKey = req.params.roleKey as string
-        const roles = getAllRoles()
-        const returnRoleList: IRole[] = []
-        roles.forEach((element) => {
-            if (element.type === 'ROLE' && isMatches(element.name, roleKey)) {
-                returnRoleList.push(element)
-            }
+        const searchBody = {
+            searches: [
+              {
+                field : 'name',
+                keyword : roleKey,
+                type : 'ROLE',
+                },
+                  {
+                    field : 'status',
+                    keyword : 'VERIFIED',
+                    type : 'ROLE',
+                      },
+                ],
+          }
+        const response = await axios.post(API_END_POINTS.addDataNode, searchBody, {
+            ...axiosRequestConfig,
+            headers: {
+                Authorization: req.header('Authorization'),
+            },
         })
+        const returnRoleList: IRole[] = []
+        if (response.data && response.data.result) {
+            const roleData = response.data.result.responseData
+            if (roleData) {
+                roleData.forEach((element: IFracRole) => {
+                        returnRoleList.push(getRoles(element))
+                })
+            }
+          }
         res.status(200).send(returnRoleList)
     } catch (err) {
         res.status((err && err.response && err.response.status) || 500).send(
@@ -74,6 +104,67 @@ export interface IActivity {
     parentRole: string
 }
 
+export interface IFracRole {
+    type: string,
+    id: string,
+    name: string,
+    description: string,
+    status: string,
+    source: string,
+    children: IFracActivity[]
+}
+
+export interface IFracActivity {
+    type: string,
+    id: string,
+    name: string,
+    description: string,
+    status: string,
+    source: string
+}
+
+function getRoles(role: IFracRole): IRole {
+ if (!role.children) {
+    return {
+        childNodes: [],
+        description: role.description,
+        id: role.id,
+        name: role.name,
+        source: role.source,
+        status: role.status,
+        type: role.type,
+
+    }
+
+ } else {
+    const finalChildList: IActivity[] = []
+    role.children.forEach((child) => {
+         if (child.type === 'ACTIVITY') {
+            const activity: IActivity = {
+                description: child.description,
+                id: child.id,
+                name: child.name,
+                parentRole: '',
+                source: child.source,
+                status: child.status,
+                type: child.type,
+
+            }
+            finalChildList.push(activity)
+         }
+     })
+    return{
+        childNodes: finalChildList,
+        description: role.description,
+        id: role.id,
+        name: role.name,
+        source: role.source,
+        status: role.status,
+        type: role.type,
+    }
+
+ }
+}
 function getAllRoles(): IRole[] {
     // tslint:disable
     const roleList: IRole[] =

@@ -129,7 +129,7 @@ export const CONSTANTS = {
   PROFANITY_SERVICE_API_BASE: env.PROFANITY_SERVICE_API_BASE || 'http://52.173.240.27:4001',
   DISCUSSION_CATEGORY_LIST: env.DISCUSSION_CATEGORY_LIST || 'cid[]=5&cid[]=6&cid[]=8&cid[]=9&cid[]=10&cid[]=11&cid[]=12&cid[]=13',
   WORKFLOW_HANDLER_SERVICE_API_BASE: env.WORKFLOW_HANDLER_SERVICE_API_BASE || 'http://localhost:5099',
-  SUNBIRD_PROXY_URL: 'https://igot-sunbird.idc.tarento.com/apis/proxies/v8/action',
+  SUNBIRD_PROXY_URL: env.SUNBIRD_PROXY_URL || 'https://igot-sunbird.idc.tarento.com/apis/proxies/v8/action',
   SUNBIRD_PROXY_API_BASE: env.SUNBIRD_PROXY_API_BASE || 'https://igot-sunbird.idc.tarento.com/api',
   SCORING_SERVICE_API_BASE: env.SCORING_SERVICE_API_BASE || 'http://localhost:7014',
   // tslint:disable-next-line:max-line-length

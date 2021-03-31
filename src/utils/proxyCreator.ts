@@ -8,7 +8,6 @@ const proxyCreator = (timeout = 10000) => createProxyServer({
   timeout,
 })
 const proxy = createProxyServer({})
-const discussProxy = createProxyServer({})
 const PROXY_SLUG = '/proxies/v8'
 
 // tslint:disable-next-line: no-any
@@ -20,20 +19,10 @@ proxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) => {
   proxyReq.setHeader('x-authenticated-userid', extractUserIdFromRequest(req))
   // tslint:disable-next-line: no-console
   console.log('proxyReq.headers:', proxyReq.headers)
-  if (req.body) {
-    const bodyData = JSON.stringify(req.body)
-    proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
-    proxyReq.write(bodyData)
-  }
-})
-
-// tslint:disable-next-line: no-any
-discussProxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) => {
-  proxyReq.setHeader('X-Channel-Id', '0131397178949058560')
-  proxyReq.setHeader('x-authenticated-user-token', extractUserToken(req))
-  proxyReq.setHeader('x-authenticated-userid', extractUserIdFromRequest(req))
   // tslint:disable-next-line: no-console
-  console.log('req.originalUrl', req.originalUrl)
+  console.log('---------------session --------------', req.session)
+  // tslint:disable-next-line: no-console
+  console.log('---------------session --------------', req.session.nodebb_authorization_token)
   if (!req.originalUrl.includes('/discussion/user/v1/create')) {
     proxyReq.setHeader('Authorization', 'Bearer ' + req.session.nodebb_authorization_token)
   }
@@ -45,11 +34,45 @@ discussProxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) 
 })
 
 // tslint:disable-next-line: no-any
-discussProxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
+// discussProxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) => {
+//   proxyReq.setHeader('X-Channel-Id', '0131397178949058560')
+//   proxyReq.setHeader('x-authenticated-user-token', extractUserToken(req))
+//   proxyReq.setHeader('x-authenticated-userid', extractUserIdFromRequest(req))
+//   // tslint:disable-next-line: no-console
+//   console.log('req.originalUrl', req.originalUrl)
+//   if (!req.originalUrl.includes('/discussion/user/v1/create')) {
+//     proxyReq.setHeader('Authorization', 'Bearer ' + req.session.nodebb_authorization_token)
+//   }
+//   if (req.body) {
+//     const bodyData = JSON.stringify(req.body)
+//     proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
+//     proxyReq.write(bodyData)
+//   }
+// })
+
+// tslint:disable-next-line: no-any
+// discussProxy.on('proxyRes', (proxyRes: any, req: any, _res: any,) => {
+//   if (req.originalUrl.includes('/discussion/user/v1/create')) {
+//     const nodebb_auth_token = proxyRes.headers.nodebb_auth_token
+//     if (req.session) {
+//       req.session.nodebb_authorization_token = nodebb_auth_token
+//     }
+//   }
+// })
+// tslint:disable-next-line: no-any
+proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
   if (req.originalUrl.includes('/discussion/user/v1/create')) {
     const nodebb_auth_token = proxyRes.headers.nodebb_auth_token
+        // tslint:disable-next-line: no-console
+    console.log('>>>>>>>>>beforeeeeeeeeeeeee>>>>>>>>', req.session)
     if (req.session) {
+          // tslint:disable-next-line: no-console
+      console.log('>>>>>>>>>beforeeeeeeeeeeeee>>>>>>>>', req.session)
       req.session.nodebb_authorization_token = nodebb_auth_token
+          // tslint:disable-next-line: no-console
+      console.log('>>>>>>>>>afterrrrrrrrrrrrrrr>>>>>>>>', req.session)
+          // tslint:disable-next-line: no-console
+      console.log('>>>>>>>>>afterrrrrrrrrrrrrrr>>>>>>>>', req.session.nodebb_authorization_token)
     }
   }
 })
@@ -125,8 +148,10 @@ export function proxyCreatorDiscussion(route: Router, targetUrl: string, _timeou
   route.all('/*', (req, res) => {
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorDiscussion', req.originalUrl)
+    // tslint:disable-next-line: no-console
+    console.log('--------------line 148 -------------', req.session)
     const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
-    discussProxy.web(req, res, {
+    proxy.web(req, res, {
       changeOrigin: true,
       ignorePath: true,
       target: targetUrl + url,
@@ -198,7 +223,7 @@ export function proxyCreatorToAppentUserId(route: Router, targetUrl: string, _ti
   return route
 }
 
-export function proxyCreatorQML(route: Router, targetUrl: string,  urlType: string, _timeout = 10000, ): Router {
+export function proxyCreatorQML(route: Router, targetUrl: string, urlType: string, _timeout = 10000, ): Router {
   route.all('/*', (req, res) => {
     const originalUrl = req.originalUrl.replace(urlType, '/')
     const url = removePrefix(`${PROXY_SLUG}`, originalUrl)

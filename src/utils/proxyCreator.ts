@@ -23,9 +23,7 @@ proxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) => {
   console.log('---------------session --------------', req.session)
   // tslint:disable-next-line: no-console
   console.log('---------------session --------------', req.session.nodebb_authorization_token)
-  if (!req.originalUrl.includes('/discussion/user/v1/create')) {
-    proxyReq.setHeader('Authorization', 'Bearer ' + req.session.nodebb_authorization_token)
-  }
+ 
   if (req.body) {
     const bodyData = JSON.stringify(req.body)
     proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))

@@ -8,11 +8,14 @@ const proxyCreator = (timeout = 10000) => createProxyServer({
   timeout,
 })
 const proxy = createProxyServer({})
-const discussProxy = createProxyServer({})
 const PROXY_SLUG = '/proxies/v8'
 
 // tslint:disable-next-line: no-any
 proxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) => {
+  // tslint:disable-next-line: no-console
+  console.log('----req.originalUrl in proxy-----', req.originalUrl)
+  // tslint:disable-next-line: no-console
+  console.log('-----in proxy session----', req.session)
   proxyReq.setHeader('X-Channel-Id', '0131397178949058560')
   // tslint:disable-next-line: max-line-length
   proxyReq.setHeader('Authorization', CONSTANTS.SB_API_KEY)
@@ -20,23 +23,17 @@ proxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) => {
   proxyReq.setHeader('x-authenticated-userid', extractUserIdFromRequest(req))
   // tslint:disable-next-line: no-console
   console.log('proxyReq.headers:', proxyReq.headers)
-  if (req.body) {
-    const bodyData = JSON.stringify(req.body)
-    proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
-    proxyReq.write(bodyData)
-  }
-})
 
-// tslint:disable-next-line: no-any
-discussProxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) => {
-  proxyReq.setHeader('X-Channel-Id', '0131397178949058560')
-  proxyReq.setHeader('x-authenticated-user-token', extractUserToken(req))
-  proxyReq.setHeader('x-authenticated-userid', extractUserIdFromRequest(req))
-  // tslint:disable-next-line: no-console
-  console.log('req.originalUrl', req.originalUrl)
   if (!req.originalUrl.includes('/discussion/user/v1/create')) {
+    // tslint:disable-next-line: no-console
+    console.log('------------req.session----------', req.session)
+    // tslint:disable-next-line: no-console
+    console.log('------------req.session.nodebb_authorization_token----------', req.session.nodebb_authorization_token)
+    // tslint:disable-next-line: no-console
+    console.log('------------proxy req----------', proxyReq.session)
     proxyReq.setHeader('Authorization', 'Bearer ' + req.session.nodebb_authorization_token)
   }
+
   if (req.body) {
     const bodyData = JSON.stringify(req.body)
     proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
@@ -45,11 +42,58 @@ discussProxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) 
 })
 
 // tslint:disable-next-line: no-any
-discussProxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
+// discussProxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) => {
+
+//   proxyReq.setHeader('X-Channel-Id', '0131397178949058560')
+//   proxyReq.setHeader('x-authenticated-user-token', extractUserToken(req))
+//   proxyReq.setHeader('x-authenticated-userid', extractUserIdFromRequest(req))
+//   // tslint:disable-next-line: no-console
+//   console.log('req.originalUrl', req.originalUrl)
+//   if (!req.originalUrl.includes('/discussion/user/v1/create')) {
+//     console.log('------------req.session----------', req.session)
+//     console.log('------------req.session.nodebb_authorization_token----------', req.session['nodebb_authorization_token'])
+//     console.log('------------proxy req----------', proxyReq.session)
+//     proxyReq.setHeader('Authorization', 'Bearer ' + req.session.nodebb_authorization_token)
+//   }
+//   if (req.body) {
+//     const bodyData = JSON.stringify(req.body)
+//     proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
+//     proxyReq.write(bodyData)
+//   }
+// })
+
+// tslint:disable-next-line: no-any
+// discussProxy.on('proxyRes', (proxyRes: any, req: any, _res: any,) => {
+//   if (req.originalUrl.includes('/discussion/user/v1/create')) {
+//     const nodebb_auth_token = proxyRes.headers.nodebb_auth_token
+//     console.log('nodebb_auth_token------------------------', nodebb_auth_token)
+//     if (req.session) {
+//       console.log('nodebb_auth_token sesion settttttttttttttttttttt---------', nodebb_auth_token)
+//       console.log('nodebb_auth_token sesion settttttttttttttttttttt beforee---------', req.session)
+//       req.session['nodebb_authorization_token'] = nodebb_auth_token
+//       console.log('nodebb_auth_token sesion settttttttttttttttttttt beforee---------', req.session)
+//       console.log('nodebb_auth_token sesion settttttttttttttttttttt afterr----------', req.session.nodebb_authorization_token)
+//     }
+//   }
+// })
+
+// tslint:disable-next-line: no-any
+proxy.on('proxyRes', (proxyRes: any, req: any, _res: any) => {
   if (req.originalUrl.includes('/discussion/user/v1/create')) {
     const nodebb_auth_token = proxyRes.headers.nodebb_auth_token
+
+    // tslint:disable-next-line: no-console
+    console.log('nodebb_auth_token------------------------', nodebb_auth_token)
     if (req.session) {
+      // tslint:disable-next-line: no-console
+      console.log('nodebb_auth_token sesion settttttttttttttttttttt---------', nodebb_auth_token)
+      // tslint:disable-next-line: no-console
+      console.log('nodebb_auth_token sesion settttttttttttttttttttt beforee---------', req.session)
       req.session.nodebb_authorization_token = nodebb_auth_token
+      // tslint:disable-next-line: no-console
+      console.log('nodebb_auth_token sesion settttttttttttttttttttt beforee---------', req.session)
+      // tslint:disable-next-line: no-console
+      console.log('nodebb_auth_token sesion settttttttttttttttttttt afterr----------', req.session.nodebb_authorization_token)
     }
   }
 })
@@ -126,7 +170,9 @@ export function proxyCreatorDiscussion(route: Router, targetUrl: string, _timeou
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorDiscussion', req.originalUrl)
     const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
-    discussProxy.web(req, res, {
+    // tslint:disable-next-line: no-console
+    console.log('------------req session line 144--------', req.session)
+    proxy.web(req, res, {
       changeOrigin: true,
       ignorePath: true,
       target: targetUrl + url,

@@ -10,6 +10,8 @@ const API_END_POINTS = {
     getActivity: `${CONSTANTS.FRAC_API_BASE}/api/frac/getAllNodes?type=ACTIVITY&status=VERIFIED`,
     getCompetencyArea: `${CONSTANTS.FRAC_API_BASE}/api/frac/getAllNodes?type=COMPETENCYAREA`,
     getDictionary: `${CONSTANTS.FRAC_API_BASE}/api/frac/getAllNodes?type=COMPETENCY&status=VERIFIED`,
+    getNodeById: (id: string, type: string) =>
+        `${CONSTANTS.FRAC_API_BASE}/api/frac/getNodeById?id=${id}&type=${type}&isDetail=true`,
     getRole: `${CONSTANTS.FRAC_API_BASE}/api/frac/getAllNodes?type=ROLE&status=VERIFIED`,
     searchNodes: `${CONSTANTS.FRAC_API_BASE}/api/frac/searchNodes`,
 }
@@ -93,6 +95,26 @@ fracApi.post('/addDataNodeBulk', async (req, res) => {
 fracApi.post('/searchNodes', async (req, res) => {
     try {
         const response = await axios.post(API_END_POINTS.searchNodes, req.body, {
+            ...axiosRequestConfig,
+            headers: {
+                Authorization: req.header('Authorization'),
+            },
+        })
+        res.status(response.status).send(response.data)
+    } catch (err) {
+        res.status((err && err.response && err.response.status) || 500).send(
+            (err && err.response && err.response.data) || {
+                error: unknownError,
+            }
+        )
+    }
+})
+
+fracApi.get('/getNodeById/:id/:type', async (req, res) => {
+    try {
+        const id = req.params.id
+        const type = req.params.type
+        const response = await axios.get(API_END_POINTS.getNodeById(id, type), {
             ...axiosRequestConfig,
             headers: {
                 Authorization: req.header('Authorization'),

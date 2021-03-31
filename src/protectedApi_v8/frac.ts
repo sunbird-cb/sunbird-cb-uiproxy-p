@@ -8,7 +8,7 @@ const API_END_POINTS = {
     addDataNode: `${CONSTANTS.FRAC_API_BASE}/api/frac/addDataNode`,
     addDataNodeBulk: `${CONSTANTS.FRAC_API_BASE}/api/frac/addDataNodeBulk`,
     getActivity: `${CONSTANTS.FRAC_API_BASE}/api/frac/getAllNodes?type=ACTIVITY&status=VERIFIED`,
-    getCompetencyArea: `${CONSTANTS.FRAC_API_BASE}/api/frac/getAllNodes?type=COMPETENCYAREA&status=VERIFIED`,
+    getCompetencyArea: `${CONSTANTS.FRAC_API_BASE}/api/frac/getAllNodes?type=COMPETENCYAREA`,
     getDictionary: `${CONSTANTS.FRAC_API_BASE}/api/frac/getAllNodes?type=COMPETENCY&status=VERIFIED`,
     getRole: `${CONSTANTS.FRAC_API_BASE}/api/frac/getAllNodes?type=ROLE&status=VERIFIED`,
     searchNodes: `${CONSTANTS.FRAC_API_BASE}/api/frac/searchNodes`,

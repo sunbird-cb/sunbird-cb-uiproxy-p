@@ -8,7 +8,6 @@ const proxyCreator = (timeout = 10000) => createProxyServer({
   timeout,
 })
 const proxy = createProxyServer({})
-const discussProxy = createProxyServer({})
 const PROXY_SLUG = '/proxies/v8'
 
 // tslint:disable-next-line: no-any
@@ -19,23 +18,13 @@ proxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) => {
   proxyReq.setHeader('x-authenticated-user-token', extractUserToken(req))
   proxyReq.setHeader('x-authenticated-userid', extractUserIdFromRequest(req))
 
-  if (req.body) {
-    const bodyData = JSON.stringify(req.body)
-    proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
-    proxyReq.write(bodyData)
-  }
-})
-
-// tslint:disable-next-line: no-any
-discussProxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) => {
-  proxyReq.setHeader('X-Channel-Id', '0131397178949058560')
-  proxyReq.setHeader('x-authenticated-user-token', extractUserToken(req))
-  proxyReq.setHeader('x-authenticated-userid', extractUserIdFromRequest(req))
-  // tslint:disable-next-line: no-console
-  console.log('req.originalUrl', req.originalUrl)
-  if (!req.originalUrl.includes('/discussion/user/v1/create')) {
+  // condition has been added to set the session in nodebb req header
+  if (req.originalUrl.includes('/discussion') && !req.originalUrl.includes('/discussion/user/v1/create')) {
+    // tslint:disable-next-line: no-console
+    console.log('session check---', req.session)
     proxyReq.setHeader('Authorization', 'Bearer ' + req.session.nodebb_authorization_token)
   }
+
   if (req.body) {
     const bodyData = JSON.stringify(req.body)
     proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
@@ -44,11 +33,35 @@ discussProxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) 
 })
 
 // tslint:disable-next-line: no-any
-discussProxy.on('proxyRes', (proxyRes: any, req: any, _res: any,) => {
+// discussProxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) => {
+//   proxyReq.setHeader('X-Channel-Id', '0131397178949058560')
+//   proxyReq.setHeader('x-authenticated-user-token', extractUserToken(req))
+//   proxyReq.setHeader('x-authenticated-userid', extractUserIdFromRequest(req))
+//   // tslint:disable-next-line: no-console
+//   console.log('req.originalUrl', req.originalUrl)
+//   if (req.originalUrl.includes('/discussion')) {
+//     if (!req.originalUrl.includes('/discussion/user/v1/create')) {
+//       proxyReq.setHeader('Authorization', 'Bearer ' + req.session.nodebb_authorization_token)
+//     }
+//   }
+
+//   if (req.body) {
+//     const bodyData = JSON.stringify(req.body)
+//     proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
+//     proxyReq.write(bodyData)
+//   }
+// })
+
+// tslint:disable-next-line: no-any
+proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
   if (req.originalUrl.includes('/discussion/user/v1/create')) {
     const nodebb_auth_token = proxyRes.headers.nodebb_auth_token
     if (req.session) {
+      // tslint:disable-next-line: no-console
+      console.log('session before set---', req.session)
       req.session.nodebb_authorization_token = nodebb_auth_token
+      // tslint:disable-next-line: no-console
+      console.log('session after set---', req.session)
     }
   }
 })
@@ -120,19 +133,7 @@ export function proxyCreatorSunbird(route: Router, targetUrl: string, _timeout =
   return route
 }
 
-export function proxyCreatorDiscussion(route: Router, targetUrl: string, _timeout = 10000): Router {
-  route.all('/*', (req, res) => {
-    // tslint:disable-next-line: no-console
-    console.log('REQ_URL_ORIGINAL proxyCreatorDiscussion', req.originalUrl)
-    const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
-    discussProxy.web(req, res, {
-      changeOrigin: true,
-      ignorePath: true,
-      target: targetUrl + url,
-    })
-  })
-  return route
-}
+
 
 export function proxyCreatorKnowledge(route: Router, targetUrl: string, _timeout = 10000): Router {
   route.all('/*', (req, res) => {
@@ -197,7 +198,7 @@ export function proxyCreatorToAppentUserId(route: Router, targetUrl: string, _ti
   return route
 }
 
-export function proxyCreatorQML(route: Router, targetUrl: string, urlType: string, _timeout = 10000,): Router {
+export function proxyCreatorQML(route: Router, targetUrl: string, urlType: string, _timeout = 10000, ): Router {
   route.all('/*', (req, res) => {
     const originalUrl = req.originalUrl.replace(urlType, '/')
     const url = removePrefix(`${PROXY_SLUG}`, originalUrl)

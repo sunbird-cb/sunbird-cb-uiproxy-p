@@ -10,7 +10,7 @@ import { CONSTANTS } from '../utils/env'
 export const roleActivityApi = Router()
 
 const API_END_POINTS = {
-    searchNodes: `${CONSTANTS.FRAC_API_BASE}/api/frac/searchNodes`,
+    searchNodes: `${CONSTANTS.FRAC_API_BASE}/fracapis/frac/searchNodes`,
 }
 
 roleActivityApi.get('/', async (req, res) => {

@@ -20,8 +20,6 @@ proxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) => {
 
   // condition has been added to set the session in nodebb req header
   if (req.originalUrl.includes('/discussion') && !req.originalUrl.includes('/discussion/user/v1/create')) {
-    // tslint:disable-next-line: no-console
-    console.log('session check---', req.session)
     proxyReq.setHeader('Authorization', 'Bearer ' + req.session.nodebb_authorization_token)
   }
 
@@ -33,35 +31,11 @@ proxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) => {
 })
 
 // tslint:disable-next-line: no-any
-// discussProxy.on('proxyReq', (proxyReq: any, req: any, _res: any, _options: any) => {
-//   proxyReq.setHeader('X-Channel-Id', '0131397178949058560')
-//   proxyReq.setHeader('x-authenticated-user-token', extractUserToken(req))
-//   proxyReq.setHeader('x-authenticated-userid', extractUserIdFromRequest(req))
-//   // tslint:disable-next-line: no-console
-//   console.log('req.originalUrl', req.originalUrl)
-//   if (req.originalUrl.includes('/discussion')) {
-//     if (!req.originalUrl.includes('/discussion/user/v1/create')) {
-//       proxyReq.setHeader('Authorization', 'Bearer ' + req.session.nodebb_authorization_token)
-//     }
-//   }
-
-//   if (req.body) {
-//     const bodyData = JSON.stringify(req.body)
-//     proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
-//     proxyReq.write(bodyData)
-//   }
-// })
-
-// tslint:disable-next-line: no-any
 proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
   if (req.originalUrl.includes('/discussion/user/v1/create')) {
     const nodebb_auth_token = proxyRes.headers.nodebb_auth_token
     if (req.session) {
-      // tslint:disable-next-line: no-console
-      console.log('session before set---', req.session)
       req.session.nodebb_authorization_token = nodebb_auth_token
-      // tslint:disable-next-line: no-console
-      console.log('session after set---', req.session)
     }
   }
 })
@@ -132,8 +106,6 @@ export function proxyCreatorSunbird(route: Router, targetUrl: string, _timeout =
   })
   return route
 }
-
-
 
 export function proxyCreatorKnowledge(route: Router, targetUrl: string, _timeout = 10000): Router {
   route.all('/*', (req, res) => {

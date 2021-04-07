@@ -134,6 +134,7 @@ export function proxyCreatorDiscussion(route: Router, targetUrl: string, _timeou
     proxy.web(req, res, {
       changeOrigin: true,
       ignorePath: true,
+      secure: false,
       target: targetUrl + url,
     })
   })

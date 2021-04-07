@@ -4,7 +4,7 @@ import FormData from 'form-data'
 import { CONSTANTS } from '../utils/env'
 import {
   ilpProxyCreatorRoute,
-  proxyCreatorDiscussion,
+  // proxyCreatorDiscussion,
   proxyCreatorKnowledge,
   proxyCreatorLearner,
   proxyCreatorQML,
@@ -160,7 +160,7 @@ proxiesV8.use('/assets/*',
 // )
 proxiesV8.use('/discussion/*',
   // tslint:disable-next-line: max-line-length
-  proxyCreatorDiscussion(express.Router(), `${CONSTANTS.DISCUSSION_HUB_MIDDLEWARE}`)
+  proxyCreatorSunbird(express.Router(), `${CONSTANTS.DISCUSSION_HUB_MIDDLEWARE}`)
 )
 
 function removePrefix(prefix: string, s: string) {

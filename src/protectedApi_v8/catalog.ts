@@ -1,11 +1,12 @@
-import axios from 'axios'
+// tslint:disable
+// import axios from 'axios'
 import { Router } from 'express'
-import { axiosRequestConfig } from '../configs/request.config'
+// import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 
 import { IFilterUnitContent } from '../models/catalog.model'
 import { getFilters, getFilterUnitByType } from '../service/catalog'
-import { logError, logInfo } from '../utils/logger'
+import { logError } from '../utils/logger'
 import { ERROR } from '../utils/message'
 import { extractAuthorizationFromRequest, extractUserIdFromRequest } from '../utils/requestExtract'
 
@@ -19,13 +20,16 @@ const failedToProcess = 'Failed to process the request. '
 catalogApi.get('/', async (req, res) => {
   try {
     const xAuth = extractAuthorizationFromRequest(req).split(' ')
-    const response = await axios.get(API_END_POINTS.getCatalogEndPoint, {
-        ...axiosRequestConfig,
-        headers: {
-          xAuthUser: xAuth[1],
-        },
-    })
-    logInfo('' + response.status)
+    if (!xAuth) {
+      res.status(400).send(ERROR.GENERAL_ERR_MSG + 'in Calling : ' + API_END_POINTS.getCatalogEndPoint)
+      return
+    }
+    // const response = await axios.get(API_END_POINTS.getCatalogEndPoint, {
+    //    ...axiosRequestConfig,
+    //    headers: {
+    //      xAuthUser: xAuth[1],
+    //    },
+    // })
     res.status(200).send(getTerms())
     // tslint:disable
     // res.status(response.status).send(response.data)

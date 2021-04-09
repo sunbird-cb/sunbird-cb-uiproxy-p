@@ -6,10 +6,7 @@ import { IPersonalDetails, ISBUser, ISunbirdbUserResponse } from '../../models/u
 import { CONSTANTS } from '../../utils/env'
 import { logError, logInfo } from '../../utils/logger'
 import { ERROR } from '../../utils/message'
-import {
-    extractRootOrgFromRequest,
-    extractUserIdFromRequest
-} from '../../utils/requestExtract'
+import { extractUserIdFromRequest } from '../../utils/requestExtract'
 
 const API_END_POINTS = {
     createOSUserRegistry: (userId: string) => `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/create/profile?userId=${userId}`,
@@ -199,7 +196,7 @@ profileDeatailsApi.get('/migrateRegistry', async (req, res) => {
 profileDeatailsApi.post('/createUser', async (req, res) => {
     try {
         const sbchannel_ = req.body.personalDetails.channel
-        if(!sbchannel_) {
+        if (!sbchannel_) {
             res.status(400).send('Channel param is missing in personalDetails. Use DeptName as Channel value.')
             return
         }
@@ -207,7 +204,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
         const sbemailVerified_ = true
         const sbfirstName_ = req.body.personalDetails.firstName
         const sblastName_ = req.body.personalDetails.lastName
-        
+
         const searchresponse = await axios({
             ...axiosRequestConfig,
             data: { request: { query: '', filters: { email: sbemail_.toLowerCase() } } },
@@ -219,7 +216,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
         } else {
             const sbUserProfile: Partial<ISBUser> = {
                 channel: sbchannel_, email: sbemail_, emailVerified: sbemailVerified_, firstName: sbfirstName_,
-                lastName: sblastName_
+                lastName: sblastName_,
             }
             const response = await axios({
                 ...axiosRequestConfig,

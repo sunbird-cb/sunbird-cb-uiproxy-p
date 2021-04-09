@@ -13,7 +13,7 @@ import {
 
 const API_END_POINTS = {
     createOSUserRegistry: (userId: string) => `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/create/profile?userId=${userId}`,
-    createSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/v3/user/create`,
+    createSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/v1/user/signup`,
     createUserRegistry: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/createUserRegistry`,
     getMasterLanguages: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getMasterLanguages`,
     getMasterNationalities: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getMasterNationalities`,
@@ -198,12 +198,16 @@ profileDeatailsApi.get('/migrateRegistry', async (req, res) => {
 
 profileDeatailsApi.post('/createUser', async (req, res) => {
     try {
+        const sbchannel_ = req.body.personalDetails.channel
+        if(!sbchannel_) {
+            res.status(400).send('Channel param is missing in personalDetails. Use DeptName as Channel value.')
+            return
+        }
         const sbemail_ = req.body.personalDetails.email
         const sbemailVerified_ = true
         const sbfirstName_ = req.body.personalDetails.firstName
         const sblastName_ = req.body.personalDetails.lastName
-        const sbchannel_ = extractRootOrgFromRequest(req)
-        const passText = 'Test.1234'
+        
         const searchresponse = await axios({
             ...axiosRequestConfig,
             data: { request: { query: '', filters: { email: sbemail_.toLowerCase() } } },
@@ -215,7 +219,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
         } else {
             const sbUserProfile: Partial<ISBUser> = {
                 channel: sbchannel_, email: sbemail_, emailVerified: sbemailVerified_, firstName: sbfirstName_,
-                lastName: sblastName_, password: passText,
+                lastName: sblastName_
             }
             const response = await axios({
                 ...axiosRequestConfig,

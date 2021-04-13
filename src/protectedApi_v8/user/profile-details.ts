@@ -236,30 +236,32 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
                     userId: sbUserId,
                 }
 
+                logInfo('Sending Password reset request -> ' + passwordResetRequest)
                 const passwordResetResponse = await axios({
-                    data: passwordResetRequest,
+                    ...axiosRequestConfig,
+                    data: { request: passwordResetRequest },
                     method: 'POST',
                     url: API_END_POINTS.resetPassword,
                 })
+                logInfo('Received response from password reset -> ' + passwordResetResponse)
 
                 if (passwordResetResponse.data.params.status === 'success') {
                     const welcomeMailRequest = {
-                        request : {
-                            allowedLoging: 'You can use your email to Login',
-                            body: 'Hello',
-                            emailTemplateType: 'welcome',
-                            link: passwordResetResponse.data.result.link,
-                            mode: 'email',
-                            orgName: sbchannel_,
-                            recipientEmails: [ sbemail_ ],
-                            setPasswordLink: true,
-                            subject: 'Welcome Email',
-                            welcomeMessage: 'Hello',
-                        },
+                        allowedLoging: 'You can use your email to Login',
+                        body: 'Hello',
+                        emailTemplateType: 'welcome',
+                        link: passwordResetResponse.data.result.link,
+                        mode: 'email',
+                        orgName: sbchannel_,
+                        recipientEmails: [ sbemail_ ],
+                        setPasswordLink: true,
+                        subject: 'Welcome Email',
+                        welcomeMessage: 'Hello',
                     }
 
                     const welcomeMailResponse = await axios({
-                        data: welcomeMailRequest,
+                        ...axiosRequestConfig,
+                        data: { request: welcomeMailRequest },
                         method: 'POST',
                         url: API_END_POINTS.sendWelcomeEmail,
                     })

@@ -10,7 +10,7 @@ import { extractUserIdFromRequest } from '../../utils/requestExtract'
 
 const API_END_POINTS = {
     createOSUserRegistry: (userId: string) => `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/create/profile?userId=${userId}`,
-    createSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/v1/user/signup`,
+    createSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/v3/user/create`,
     createUserRegistry: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/createUserRegistry`,
     getMasterLanguages: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getMasterLanguages`,
     getMasterNationalities: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getMasterNationalities`,
@@ -20,7 +20,9 @@ const API_END_POINTS = {
     getUserRegistryById: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getUserRegistryById`,
     // tslint:disable-next-line: object-literal-sort-keys
     migrateRegistry: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/migrateRegistry`,
+    resetPassword: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/password/reset`,
     searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
+    sendWelcomeEmail: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/notification/email`,
     setUserProfileStatus: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/setUserProfileStatus`,
     updateOSUserRegistry: (userId: string) => `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/update/profile?userId=${userId}`,
     userProfileStatus: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/userProfileStatus`,
@@ -228,6 +230,47 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
                 res.status(400).send('Not able to create User in SunBird')
             } else {
                 const sbUserId = response.data.result.userId
+                const passwordResetRequest = {
+                    key: 'email',
+                    type: 'email',
+                    userId: sbUserId,
+                }
+
+                const passwordResetResponse = await axios({
+                    data: passwordResetRequest,
+                    method: 'POST',
+                    url: API_END_POINTS.resetPassword,
+                })
+
+                if (passwordResetResponse.data.params.status === 'success') {
+                    const welcomeMailRequest = {
+                        request : {
+                            allowedLoging: 'You can use your email to Login',
+                            body: 'Hello',
+                            emailTemplateType: 'welcome',
+                            link: passwordResetResponse.data.result.link,
+                            mode: 'email',
+                            orgName: sbchannel_,
+                            recipientEmails: [ sbemail_ ],
+                            setPasswordLink: true,
+                            subject: 'Welcome Email',
+                            welcomeMessage: 'Hello',
+                        },
+                    }
+
+                    const welcomeMailResponse = await axios({
+                        data: welcomeMailRequest,
+                        method: 'POST',
+                        url: API_END_POINTS.sendWelcomeEmail,
+                    })
+
+                    if (welcomeMailResponse.data.params.status !== 'success') {
+                        res.status(500).send('Failed to send Welcome Email.')
+                    }
+                } else {
+                    res.status(500).send('Failed to reset the password for user.')
+                }
+
                 const personalDetailsRegistry: IPersonalDetails = {
                     firstname: sbfirstName_,
                     primaryEmail: sbemail_,

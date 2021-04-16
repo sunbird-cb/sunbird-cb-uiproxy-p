@@ -11,7 +11,6 @@ export const CONSTANTS = {
   BADGE_API_BASE: env.BADGE_API_BASE || env.SB_EXT_API_BASE_2,
   NETWORK_HUB_SERVICE_BACKEND: env.NETWORK_HUB_SERVICE_BACKEND || 'http://localhost:3013',
 
-  X_Channel_Id: env.X_CHANNEL_ID || '0131397178949058560',
   CASSANDRA_IP: env.CASSANDRA_IP || '10.177.157.30',
   CASSANDRA_KEYSPACE: env.CASSANDRA_KEYSPACE || 'bodhi',
   CASSANDRA_PASSWORD: env.CASSANDRA_PASSWORD || '',
@@ -47,7 +46,7 @@ export const CONSTANTS = {
   // tslint:disable-next-line: object-literal-sort-keys
   KC_NEW_USER_DEFAULT_PWD: env.KC_NEW_USER_DEFAULT_PWD || 'User@123',
   KEYCLOAK_REALM: env.KEYCLOAK_REALM || 'sunbird',
-  KEYCLOAK_SESSION_TTL: 24 * 60 * 60 * 1000,
+  KEYCLOAK_SESSION_TTL:  24 * 60 * 60 * 1000,
   KHUB_CLIENT_SECRET: env.KHUB_CLIENT_SECRET || 'axc123',
   KHUB_GRAPH_DATA: env.KHUB_GRAPH_DATA || 'http://10.177.157.30:3016',
   KHUB_SEARCH_BASE: env.KHUB_SEARCH_BASE || 'http://10.177.157.30:3014',
@@ -136,6 +135,8 @@ export const CONSTANTS = {
   // tslint:disable-next-line:max-line-length
   SB_API_KEY: env.SB_API_KEY || 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRekw4VVA1dUtqUFdaZVpMd1ZtTFJvNHdqWTg2a2FrcSJ9.TPjV0xLacSbp3FbJ7XeqHoKFN35Rl4YHx3DZNN9pm0o',
   LEARNER_SERVICE_API_BASE: env.LEARNER_SERVICE_API_BASE || 'http://learner-service:9000',
+
+  X_Channel_Id: env.X_CHANNEL_ID || '0131397178949058560',
 }
 
 export const RESTRICTED_PYTHON_STMT: string[] = process.env.RESTRICTED_CHARACTERS

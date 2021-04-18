@@ -26,6 +26,7 @@ const API_END_POINTS = {
     setUserProfileStatus: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/setUserProfileStatus`,
     updateOSUserRegistry: (userId: string) => `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/update/profile?userId=${userId}`,
     userProfileStatus: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/userProfileStatus`,
+    userRead: (userId: string) => `${CONSTANTS.LEARNER_SERVICE_API_BASE}/user/v1/read/${userId}`,
 }
 
 export async function getUserProfileStatus(wid: string) {
@@ -215,6 +216,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
         })
         if (searchresponse.data.result.response.count > 0) {
             res.status(400).send('Email address already exist')
+            return
         } else {
             const sbUserProfile: Partial<ISBUser> = {
                 channel: sbchannel_, email: sbemail_, emailVerified: sbemailVerified_, firstName: sbfirstName_,
@@ -228,8 +230,19 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
             })
             if (response.data.responseCode === 'CLIENT_ERROR') {
                 res.status(400).send('Not able to create User in SunBird')
+                return
             } else {
                 const sbUserId = response.data.result.userId
+                const sbUserReadResponse = await axios({
+                    ...axiosRequestConfig,
+                    method: 'GET',
+                    url: API_END_POINTS.userRead(sbUserId),
+                })
+                if (sbUserReadResponse.data.params.status !== 'success') {
+                    res.status(500).send('Failed to read newly created user details.')
+                    return
+                }
+
                 const passwordResetRequest = {
                     key: 'email',
                     type: 'email',
@@ -268,15 +281,18 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
 
                     if (welcomeMailResponse.data.params.status !== 'success') {
                         res.status(500).send('Failed to send Welcome Email.')
+                        return
                     }
                 } else {
                     res.status(500).send('Failed to reset the password for user.')
+                    return
                 }
 
                 const personalDetailsRegistry: IPersonalDetails = {
                     firstname: sbfirstName_,
                     primaryEmail: sbemail_,
                     surname: sblastName_,
+                    userName: sbUserReadResponse.data.result.response.userName,
                 }
                 const userRegistry = getUserRegistry(personalDetailsRegistry)
                 const userRegistryResponse = await axios({

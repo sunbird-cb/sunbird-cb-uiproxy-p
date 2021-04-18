@@ -26,7 +26,7 @@ const API_END_POINTS = {
     setUserProfileStatus: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/setUserProfileStatus`,
     updateOSUserRegistry: (userId: string) => `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/update/profile?userId=${userId}`,
     userProfileStatus: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/userProfileStatus`,
-    userRead: (userId: string) => `${CONSTANTS.LEARNER_SERVICE_API_BASE}/user/v1/read/${userId}`,
+    userRead: (userId: string) => `${CONSTANTS.LEARNER_SERVICE_API_BASE}/v1/user/read/${userId}`,
 }
 
 export async function getUserProfileStatus(wid: string) {

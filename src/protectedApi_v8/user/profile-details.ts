@@ -6,7 +6,7 @@ import { IPersonalDetails, ISBUser, ISunbirdbUserResponse } from '../../models/u
 import { CONSTANTS } from '../../utils/env'
 import { logError, logInfo } from '../../utils/logger'
 import { ERROR } from '../../utils/message'
-import { extractUserIdFromRequest } from '../../utils/requestExtract'
+import { extractUserIdFromRequest, extractUserToken } from '../../utils/requestExtract'
 
 const API_END_POINTS = {
     createOSUserRegistry: (userId: string) => `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/create/profile?userId=${userId}`,
@@ -235,6 +235,10 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
                 const sbUserId = response.data.result.userId
                 const sbUserReadResponse = await axios({
                     ...axiosRequestConfig,
+                    headers: {
+                        Authorization: CONSTANTS.SB_API_KEY,
+                        'x-authenticated-user-token': extractUserToken(req),
+                    },
                     method: 'GET',
                     url: API_END_POINTS.userRead(sbUserId),
                 })

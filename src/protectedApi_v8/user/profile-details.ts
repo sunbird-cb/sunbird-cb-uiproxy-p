@@ -198,8 +198,8 @@ profileDeatailsApi.get('/migrateRegistry', async (req, res) => {
 
 profileDeatailsApi.post('/createUser', async (req, res) => {
     try {
-        const sbchannel_ = req.body.personalDetails.channel
-        if (!sbchannel_) {
+        const sbChannel = req.body.personalDetails.channel
+        if (!sbChannel) {
             res.status(400).send('Channel param is missing in personalDetails. Use DeptName as Channel value.')
             return
         }
@@ -219,7 +219,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
             return
         } else {
             const sbUserProfile: Partial<ISBUser> = {
-                channel: sbchannel_, email: sbemail_, emailVerified: sbemailVerified_, firstName: sbfirstName_,
+                channel: sbChannel, email: sbemail_, emailVerified: sbemailVerified_, firstName: sbfirstName_,
                 lastName: sblastName_,
             }
             const response = await axios({
@@ -269,7 +269,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
                         emailTemplateType: 'welcome',
                         link: passwordResetResponse.data.result.link,
                         mode: 'email',
-                        orgName: sbchannel_,
+                        orgName: sbChannel,
                         recipientEmails: [ sbemail_ ],
                         setPasswordLink: true,
                         subject: 'Welcome Email',
@@ -298,7 +298,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
                     surname: sblastName_,
                     userName: sbUserReadResponse.data.result.response.userName,
                 }
-                const userRegistry = getUserRegistry(personalDetailsRegistry)
+                const userRegistry = getUserRegistry(personalDetailsRegistry, sbChannel)
                 const userRegistryResponse = await axios({
                     ...axiosRequestConfig,
                     data: userRegistry,
@@ -325,7 +325,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
     }
 })
 
-function getUserRegistry(personalDetailsRegistry: IPersonalDetails) {
+function getUserRegistry(personalDetailsRegistry: IPersonalDetails, deptName: string) {
     return {
         academics: [
             {
@@ -345,7 +345,7 @@ function getUserRegistry(personalDetailsRegistry: IPersonalDetails) {
             allotmentYearOfService: '',
             cadre: '',
             civilListNo: '',
-            departmentName: '',
+            departmentName: deptName,
             dojOfService: '',
             employeeCode: '',
             officialPostalAddress: '',

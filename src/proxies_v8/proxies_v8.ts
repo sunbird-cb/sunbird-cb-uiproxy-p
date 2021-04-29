@@ -182,12 +182,10 @@ proxiesV8.post('/notifyContentState', async (req, res) => {
   }
   logInfo('Received req url is -> ' + req.protocol + '://' + req.get('host') + req.originalUrl)
   let contentBody = ''
-  let actionNameValue = ''
   let emailSubject = ''
   switch (req.body.contentState) {
     case 'sendForReview':
       contentBody = `${CONSTANTS.NOTIFY_SEND_FOR_REVIEW_BODY}`
-      actionNameValue = 'Review Content'
       emailSubject = 'Request to Review Content'
       break
     case 'reviewCompleted':
@@ -201,7 +199,6 @@ proxiesV8.post('/notifyContentState', async (req, res) => {
     case 'sendForPublish':
       contentBody = `${CONSTANTS.NOTIFY_SEND_FOR_PUBLISH_BODY}`
       emailSubject = 'Request to Publish Content'
-      actionNameValue = 'Publish Content'
       break
     case 'publishCompleted':
       contentBody = `${CONSTANTS.NOTIFY_PUBLISH_COMPLETED_BODY}`
@@ -221,8 +218,6 @@ proxiesV8.post('/notifyContentState', async (req, res) => {
   }
   logInfo('Composed contentBody -> ' + contentBody)
   const notifyMailRequest = {
-    ActionName: actionNameValue === '' ? null : actionNameValue,
-    actionUrl: actionNameValue === '' ? null : req.body.contentLink,
     config: {
       sender: req.body.sender,
       subject: emailSubject,
@@ -230,7 +225,6 @@ proxiesV8.post('/notifyContentState', async (req, res) => {
     deliveryType: 'message',
     ids: req.body.recipientEmails,
     mode: 'email',
-    orgName: req.body.orgName,
     template: {
       id: `${CONSTANTS.NOTIFY_EMAIL_TEMPLATE_ID}`,
       params: {

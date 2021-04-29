@@ -1,7 +1,10 @@
+import axios from 'axios'
 import express from 'express'
 import { UploadedFile } from 'express-fileupload'
 import FormData from 'form-data'
+import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
+import { logInfo } from '../utils/logger'
 import {
   ilpProxyCreatorRoute,
   // proxyCreatorDiscussion,
@@ -15,6 +18,10 @@ import {
   scormProxyCreatorRoute
 } from '../utils/proxyCreator'
 import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtract'
+
+const API_END_POINTS = {
+  contentNotificationEmail: `${CONSTANTS.NOTIFICATION_SERVIC_API_BASE}/v1/notification/send/sync`,
+}
 
 export const proxiesV8 = express.Router()
 
@@ -166,3 +173,80 @@ proxiesV8.use('/discussion/*',
 function removePrefix(prefix: string, s: string) {
   return s.substr(prefix.length)
 }
+
+proxiesV8.post('/notifyContentState', async (req, res) => {
+  const contentStateError = 'It should be one of [sendForReview, reviewCompleted, reviewFailed,' +
+  ' sendForPublish, publishCompleted, publishFailed]'
+  if (!req.body || !req.body.contentState) {
+    res.status(400).send('ContentState is missing in request body. ' + contentStateError)
+  }
+  logInfo('Received req url is -> ' + req.protocol + '://' + req.get('host') + req.originalUrl)
+  let contentBody = ''
+  let actionNameValue = ''
+  switch (req.body.contentState) {
+    case 'sendForReview':
+      contentBody = `${CONSTANTS.NOTIFY_SEND_FOR_REVIEW_BODY}`
+      actionNameValue = 'Review Content'
+      break
+    case 'reviewCompleted':
+      contentBody = `${CONSTANTS.NOTIFY_REVIEW_COMPLETED_BODY}`
+      break
+    case 'reviewFailed':
+      contentBody = `${CONSTANTS.NOTIFY_REVIEW_FAILED}`
+      break
+    case 'sendForPublish':
+      contentBody = `${CONSTANTS.NOTIFY_SEND_FOR_PUBLISH_BODY}`
+      actionNameValue = 'Publish Content'
+      break
+    case 'publishCompleted':
+      contentBody = `${CONSTANTS.NOTIFY_PUBLISH_COMPLETED_BODY}`
+      break
+    case 'publishFailed':
+      contentBody = `${CONSTANTS.NOTIFY_PUBLIST_FAILED}`
+      break
+    default:
+      res.status(400).send('Invalid ContentState. ' + contentStateError)
+      break
+  }
+
+  if (contentBody.includes('#contentLink') && req.body.contentLink && req.body.contentName) {
+    const contentUrlTag = '<a href="' + req.body.contentLink + '">' + req.body.contentName + '</a>'
+    contentBody = contentBody.replace('#contentLink', contentUrlTag)
+  }
+  logInfo('Composed contentBody -> ' + contentBody)
+  const notifyMailRequest = {
+    ActionName: actionNameValue === '' ? null : actionNameValue,
+    actionUrl: actionNameValue === '' ? null : req.body.contentLink,
+    config: {
+      sender: req.body.sender,
+      subject: 'Subject',
+    },
+    deliveryType: 'message',
+    ids: req.body.recipientEmails,
+    mode: 'email',
+    orgName: req.body.orgName,
+    template: {
+      id: '',
+      params: {
+        body: contentBody,
+      },
+    },
+  }
+
+  const stateEmailResponse = await axios({
+    ...axiosRequestConfig,
+    data: { request:
+      {
+        notifications: [notifyMailRequest],
+      },
+    },
+    method: 'POST',
+    url: API_END_POINTS.contentNotificationEmail,
+  })
+  logInfo('Response -> ' + JSON.stringify(stateEmailResponse.data))
+  if (stateEmailResponse.data.params.status !== 'successful') {
+    res.status(400).send('Failed to send content state notification...')
+  } else {
+    res.status(200).send('Email sent successfully.')
+  }
+})

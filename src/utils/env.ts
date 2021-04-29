@@ -46,7 +46,7 @@ export const CONSTANTS = {
   // tslint:disable-next-line: object-literal-sort-keys
   KC_NEW_USER_DEFAULT_PWD: env.KC_NEW_USER_DEFAULT_PWD || 'User@123',
   KEYCLOAK_REALM: env.KEYCLOAK_REALM || 'sunbird',
-  KEYCLOAK_SESSION_TTL: env.KEYCLOAK_SESSION_TTL ? Number(env.KEYCLOAK_SESSION_TTL) : 24 * 60 * 60 * 1000,
+  KEYCLOAK_SESSION_TTL:  24 * 60 * 60 * 1000,
   KHUB_CLIENT_SECRET: env.KHUB_CLIENT_SECRET || 'axc123',
   KHUB_GRAPH_DATA: env.KHUB_GRAPH_DATA || 'http://10.177.157.30:3016',
   KHUB_SEARCH_BASE: env.KHUB_SEARCH_BASE || 'http://10.177.157.30:3014',
@@ -135,6 +135,16 @@ export const CONSTANTS = {
   // tslint:disable-next-line:max-line-length
   SB_API_KEY: env.SB_API_KEY || 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRekw4VVA1dUtqUFdaZVpMd1ZtTFJvNHdqWTg2a2FrcSJ9.TPjV0xLacSbp3FbJ7XeqHoKFN35Rl4YHx3DZNN9pm0o',
   LEARNER_SERVICE_API_BASE: env.LEARNER_SERVICE_API_BASE || 'http://learner-service:9000',
+  X_Channel_Id: env.X_CHANNEL_ID || '0131397178949058560',
+  NOTIFICATION_SERVIC_API_BASE: env.NOTIFICATION_SERVIC_API_BASE || 'http://notification-service:9000',
+  NOTIFY_SEND_FOR_REVIEW_BODY: 'You have received request to review the content #contentLink',
+  NOTIFY_REVIEW_FAILED: 'The content #contentLink which sent for review requires few more changes. Please contact the reviewers.',
+  NOTIFY_REVIEW_COMPLETED_BODY: 'The content #contentLink is successfully reviewed and sent to publishers to publish the Content.',
+  NOTIFY_SEND_FOR_PUBLISH_BODY: 'You have received request to publish the content #contentLink',
+  NOTIFY_PUBLIST_FAILED: 'The content #contentLink which sent for publish requires few more changes. Please contact the publishers.',
+  NOTIFY_PUBLISH_COMPLETED_BODY: 'The content #contentLink is successfully published.' +
+  ' The content will be available for the users in few hours.',
+  NOTIFY_EMAIL_TEMPLATE_ID: 'emailtemplate',
 }
 
 export const RESTRICTED_PYTHON_STMT: string[] = process.env.RESTRICTED_CHARACTERS

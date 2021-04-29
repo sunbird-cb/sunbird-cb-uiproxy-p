@@ -186,7 +186,7 @@ export function formGoalRequestObj(request: { createdBy: string; name: string; d
         license: 'CC BY 4.0',
         mimeType: 'application/vnd.ekstep.content-collection',
         name: request.name,
-        primaryCategory: 'Playlist',
+        primaryCategory: 'Goals',
       },
     },
   }

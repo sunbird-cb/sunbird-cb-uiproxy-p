@@ -139,6 +139,7 @@ export interface IPersonalDetails {
   firstname: string
   surname: string
   primaryEmail: string
+  userName: string
 }
 
 export interface IUser {

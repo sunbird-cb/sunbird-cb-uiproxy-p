@@ -64,3 +64,18 @@ catalogApi.post('/tags', async (req, res) => {
     )
   }
 })
+
+export interface ITerms {
+  identifier: string,
+  code: string,
+  name: string,
+  description: string,
+  index: number,
+  status: string,
+  children: this[],
+  noOfHoursConsumed: number
+}
+
+export interface ICatalogResponse {
+  terms: ITerms[]
+}

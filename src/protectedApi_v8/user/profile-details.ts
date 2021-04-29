@@ -6,14 +6,11 @@ import { IPersonalDetails, ISBUser, ISunbirdbUserResponse } from '../../models/u
 import { CONSTANTS } from '../../utils/env'
 import { logError, logInfo } from '../../utils/logger'
 import { ERROR } from '../../utils/message'
-import {
-    extractRootOrgFromRequest,
-    extractUserIdFromRequest
-} from '../../utils/requestExtract'
+import { extractUserIdFromRequest, extractUserToken } from '../../utils/requestExtract'
 
 const API_END_POINTS = {
     createOSUserRegistry: (userId: string) => `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/create/profile?userId=${userId}`,
-    createSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/v1/user/signup`,
+    createSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/v3/user/create`,
     createUserRegistry: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/createUserRegistry`,
     getMasterLanguages: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getMasterLanguages`,
     getMasterNationalities: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getMasterNationalities`,
@@ -23,10 +20,13 @@ const API_END_POINTS = {
     getUserRegistryById: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getUserRegistryById`,
     // tslint:disable-next-line: object-literal-sort-keys
     migrateRegistry: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/migrateRegistry`,
+    resetPassword: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/password/reset`,
     searchSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/search`,
+    sendWelcomeEmail: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/private/user/v1/notification/email`,
     setUserProfileStatus: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/setUserProfileStatus`,
     updateOSUserRegistry: (userId: string) => `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/update/profile?userId=${userId}`,
     userProfileStatus: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/userProfileStatus`,
+    userRead: (userId: string) => `${CONSTANTS.LEARNER_SERVICE_API_BASE}/v1/user/read/${userId}`,
 }
 
 export async function getUserProfileStatus(wid: string) {
@@ -198,11 +198,16 @@ profileDeatailsApi.get('/migrateRegistry', async (req, res) => {
 
 profileDeatailsApi.post('/createUser', async (req, res) => {
     try {
+        const sbChannel = req.body.personalDetails.channel
+        if (!sbChannel) {
+            res.status(400).send('Channel param is missing in personalDetails. Use DeptName as Channel value.')
+            return
+        }
         const sbemail_ = req.body.personalDetails.email
         const sbemailVerified_ = true
         const sbfirstName_ = req.body.personalDetails.firstName
         const sblastName_ = req.body.personalDetails.lastName
-        const sbchannel_ = extractRootOrgFromRequest(req)
+
         const searchresponse = await axios({
             ...axiosRequestConfig,
             data: { request: { query: '', filters: { email: sbemail_.toLowerCase() } } },
@@ -211,9 +216,10 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
         })
         if (searchresponse.data.result.response.count > 0) {
             res.status(400).send('Email address already exist')
+            return
         } else {
             const sbUserProfile: Partial<ISBUser> = {
-                channel: sbchannel_, email: sbemail_, emailVerified: sbemailVerified_, firstName: sbfirstName_,
+                channel: sbChannel, email: sbemail_, emailVerified: sbemailVerified_, firstName: sbfirstName_,
                 lastName: sblastName_,
             }
             const response = await axios({
@@ -224,14 +230,75 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
             })
             if (response.data.responseCode === 'CLIENT_ERROR') {
                 res.status(400).send('Not able to create User in SunBird')
+                return
             } else {
                 const sbUserId = response.data.result.userId
+                const sbUserReadResponse = await axios({
+                    ...axiosRequestConfig,
+                    headers: {
+                        Authorization: CONSTANTS.SB_API_KEY,
+                        'x-authenticated-user-token': extractUserToken(req),
+                    },
+                    method: 'GET',
+                    url: API_END_POINTS.userRead(sbUserId),
+                })
+                if (sbUserReadResponse.data.params.status !== 'success') {
+                    res.status(500).send('Failed to read newly created user details.')
+                    return
+                }
+
+                const passwordResetRequest = {
+                    key: 'email',
+                    type: 'email',
+                    userId: sbUserId,
+                }
+
+                logInfo('Sending Password reset request -> ' + passwordResetRequest)
+                const passwordResetResponse = await axios({
+                    ...axiosRequestConfig,
+                    data: { request: passwordResetRequest },
+                    method: 'POST',
+                    url: API_END_POINTS.resetPassword,
+                })
+                logInfo('Received response from password reset -> ' + passwordResetResponse)
+
+                if (passwordResetResponse.data.params.status === 'success') {
+                    const welcomeMailRequest = {
+                        allowedLoging: 'You can use your email to Login',
+                        body: 'Hello',
+                        emailTemplateType: 'welcome',
+                        link: passwordResetResponse.data.result.link,
+                        mode: 'email',
+                        orgName: sbChannel,
+                        recipientEmails: [ sbemail_ ],
+                        setPasswordLink: true,
+                        subject: 'Welcome Email',
+                        welcomeMessage: 'Hello',
+                    }
+
+                    const welcomeMailResponse = await axios({
+                        ...axiosRequestConfig,
+                        data: { request: welcomeMailRequest },
+                        method: 'POST',
+                        url: API_END_POINTS.sendWelcomeEmail,
+                    })
+
+                    if (welcomeMailResponse.data.params.status !== 'success') {
+                        res.status(500).send('Failed to send Welcome Email.')
+                        return
+                    }
+                } else {
+                    res.status(500).send('Failed to reset the password for user.')
+                    return
+                }
+
                 const personalDetailsRegistry: IPersonalDetails = {
                     firstname: sbfirstName_,
                     primaryEmail: sbemail_,
                     surname: sblastName_,
+                    userName: sbUserReadResponse.data.result.response.userName,
                 }
-                const userRegistry = getUserRegistry(personalDetailsRegistry)
+                const userRegistry = getUserRegistry(personalDetailsRegistry, sbChannel)
                 const userRegistryResponse = await axios({
                     ...axiosRequestConfig,
                     data: userRegistry,
@@ -258,7 +325,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
     }
 })
 
-function getUserRegistry(personalDetailsRegistry: IPersonalDetails) {
+function getUserRegistry(personalDetailsRegistry: IPersonalDetails, deptName: string) {
     return {
         academics: [
             {
@@ -278,7 +345,7 @@ function getUserRegistry(personalDetailsRegistry: IPersonalDetails) {
             allotmentYearOfService: '',
             cadre: '',
             civilListNo: '',
-            departmentName: '',
+            departmentName: deptName,
             dojOfService: '',
             employeeCode: '',
             officialPostalAddress: '',

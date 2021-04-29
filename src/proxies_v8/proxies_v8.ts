@@ -210,8 +210,7 @@ proxiesV8.post('/notifyContentState', async (req, res) => {
   }
 
   if (contentBody.includes('#contentLink') && req.body.contentLink && req.body.contentName) {
-    const contentUrlTag = '<a href="' + req.body.contentLink + '">' + req.body.contentName + '</a>'
-    contentBody = contentBody.replace('#contentLink', contentUrlTag)
+    contentBody = contentBody.replace('#contentLink', req.body.contentLink)
   }
   logInfo('Composed contentBody -> ' + contentBody)
   const notifyMailRequest = {
@@ -226,7 +225,7 @@ proxiesV8.post('/notifyContentState', async (req, res) => {
     mode: 'email',
     orgName: req.body.orgName,
     template: {
-      id: '',
+      id: `${CONSTANTS.NOTIFY_EMAIL_TEMPLATE_ID}`,
       params: {
         body: contentBody,
       },

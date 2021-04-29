@@ -144,6 +144,7 @@ export const CONSTANTS = {
   NOTIFY_PUBLIST_FAILED: 'The content #contentLink which sent for publish requires few more changes. Please contact the publishers.',
   NOTIFY_PUBLISH_COMPLETED_BODY: 'The content #contentLink is successfully published.' +
   ' The content will be available for the users in few hours.',
+  NOTIFY_EMAIL_TEMPLATE_ID: 'emailtemplate',
 }
 
 export const RESTRICTED_PYTHON_STMT: string[] = process.env.RESTRICTED_CHARACTERS

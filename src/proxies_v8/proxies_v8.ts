@@ -183,26 +183,33 @@ proxiesV8.post('/notifyContentState', async (req, res) => {
   logInfo('Received req url is -> ' + req.protocol + '://' + req.get('host') + req.originalUrl)
   let contentBody = ''
   let actionNameValue = ''
+  let emailSubject = ''
   switch (req.body.contentState) {
     case 'sendForReview':
       contentBody = `${CONSTANTS.NOTIFY_SEND_FOR_REVIEW_BODY}`
       actionNameValue = 'Review Content'
+      emailSubject = 'Request to Review Content'
       break
     case 'reviewCompleted':
       contentBody = `${CONSTANTS.NOTIFY_REVIEW_COMPLETED_BODY}`
+      emailSubject = 'Content Review Completed'
       break
     case 'reviewFailed':
       contentBody = `${CONSTANTS.NOTIFY_REVIEW_FAILED}`
+      emailSubject = 'Content Review Failed'
       break
     case 'sendForPublish':
       contentBody = `${CONSTANTS.NOTIFY_SEND_FOR_PUBLISH_BODY}`
+      emailSubject = 'Request to Publish Content'
       actionNameValue = 'Publish Content'
       break
     case 'publishCompleted':
       contentBody = `${CONSTANTS.NOTIFY_PUBLISH_COMPLETED_BODY}`
+      emailSubject = 'Content Publish Completed'
       break
     case 'publishFailed':
       contentBody = `${CONSTANTS.NOTIFY_PUBLIST_FAILED}`
+      emailSubject = 'Content Publish Failed'
       break
     default:
       res.status(400).send('Invalid ContentState. ' + contentStateError)
@@ -218,7 +225,7 @@ proxiesV8.post('/notifyContentState', async (req, res) => {
     actionUrl: actionNameValue === '' ? null : req.body.contentLink,
     config: {
       sender: req.body.sender,
-      subject: 'Subject',
+      subject: emailSubject,
     },
     deliveryType: 'message',
     ids: req.body.recipientEmails,

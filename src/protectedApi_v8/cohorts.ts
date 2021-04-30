@@ -86,8 +86,8 @@ cohortsApi.get('/:groupId', async (req, res) => {
 export async function getAuthorsDetails(contentId: string) {
   try {
     logInfo('Hierarchy API=======>', API_END_POINTS.hierarchyApiEndPoint(contentId))
-
-    const hierarchyResponse = await axios.get('http://knowledge-mw-service:5000/action/content/v3/hierarchy/do_1132591765708554241127?hierarchyType=detail', {
+    const url = 'http://knowledge-mw-service:5000/action/content/v3/hierarchy/do_1132591765708554241127?hierarchyType=detail'
+    const hierarchyResponse = await axios.get(url , {
       ...axiosRequestConfig,
     })
     logInfo('Hierarchy API success')

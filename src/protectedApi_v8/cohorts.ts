@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {json, Router } from 'express'
+import {Router } from 'express'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo} from '../utils/logger'

@@ -40,7 +40,8 @@ cohortsApi.get('/:cohortType/:contentId', async (req, res) => {
       return
     }
     if (cohortType === 'authors') {
-     res.status(200).send(getAuthorsDetails(auth, contentId))
+     res.status(200).json(getAuthorsDetails(auth, contentId))
+     return
     } else {
       const url = `${API_END_POINTS.cohorts}/${contentId}/user/${extractUserIdFromRequest(
         req

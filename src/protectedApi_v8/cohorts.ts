@@ -10,6 +10,8 @@ const API_END_POINTS = {
   cohorts: `${CONSTANTS.COHORTS_API_BASE}/v2/resources`,
   groupCohorts: (groupId: number) =>
     `${CONSTANTS.USER_PROFILE_API_BASE}/groups/${groupId}/users `,
+  hierarchyApiEndPoint: (contentId: string) =>
+  `${CONSTANTS.KNOWLEDGE_MW_API_BASE}/action/content/v3/hierarchy/${contentId}?hierarchyType=detail`,
   searchUserRegistry: `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/search/profile`,
 }
 const VALID_COHORT_TYPES = new Set([
@@ -83,13 +85,12 @@ cohortsApi.get('/:groupId', async (req, res) => {
 
 export async function getAuthorsDetails(contentId: string) {
   try {
-    logInfo('Hierarchy API=======>', `${CONSTANTS.KNOWLEDGE_MW_API_BASE}
-    /action/content/v3/hierarchy/${contentId}?hierarchyType=detail`)
-    
-    const hierarchyResponse = await axios.get(`${CONSTANTS.KNOWLEDGE_MW_API_BASE}
-    /action/content/v3/hierarchy/${contentId}?hierarchyType=detail`, {
+    logInfo('Hierarchy API=======>', API_END_POINTS.hierarchyApiEndPoint(contentId))
+
+    const hierarchyResponse = await axios.get('http://knowledge-mw-service:5000/action/content/v3/hierarchy/do_1132591765708554241127?hierarchyType=detail', {
       ...axiosRequestConfig,
     })
+    logInfo('Hierarchy API success')
     const ids: string[] = []
     if (hierarchyResponse.data && hierarchyResponse.data.result &&
       hierarchyResponse.data.result.content) {

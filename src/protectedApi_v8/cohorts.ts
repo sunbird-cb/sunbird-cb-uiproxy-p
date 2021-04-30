@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Router } from 'express'
+import {Router } from 'express'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo} from '../utils/logger'
@@ -34,12 +34,13 @@ cohortsApi.get('/:cohortType/:contentId', async (req, res) => {
     }
     const org = req.header('org')
     const rootOrg = req.header('rootOrg')
+    const auth = req.header('Authorization') as string
     if (!org || !rootOrg) {
       res.status(400).send(ERROR.ERROR_NO_ORG_DATA)
       return
     }
     if (cohortType === 'authors') {
-     res.status(200).send(getAuthorsDetails(contentId))
+     res.status(200).send(getAuthorsDetails(auth, contentId))
     } else {
       const url = `${API_END_POINTS.cohorts}/${contentId}/user/${extractUserIdFromRequest(
         req
@@ -83,13 +84,17 @@ cohortsApi.get('/:groupId', async (req, res) => {
   }
 })
 
-export async function getAuthorsDetails(contentId: string) {
+export async function getAuthorsDetails(auth: string, contentId: string) {
   try {
     logInfo('Hierarchy API=======>', API_END_POINTS.hierarchyApiEndPoint(contentId))
-    const url = 'http://knowledge-mw-service:5000/action/content/v3/hierarchy/do_1132591765708554241127?hierarchyType=detail'
-    const hierarchyResponse = await axios.get(url , {
+    const prefixUrl = CONSTANTS.USER_SUNBIRD_DETAILS_API_BASE
+    const url = prefixUrl + '/apis/proxies/v8/action/content/v3/hierarchy/do_1132591765708554241127?hierarchyType=detail'
+    const hierarchyResponse = await axios.get(url, {
       ...axiosRequestConfig,
-    })
+      headers: {
+        Authorization: auth,
+      },
+  })
     logInfo('Hierarchy API success')
     const ids: string[] = []
     if (hierarchyResponse.data && hierarchyResponse.data.result &&

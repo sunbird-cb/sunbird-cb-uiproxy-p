@@ -118,7 +118,7 @@ export async function getAuthorsDetails(auth: string, contentId: string) {
     const response = await axios.post(API_END_POINTS.searchUserRegistry, { ...searchBody }, {
     ...axiosRequestConfig,
   })
-    logInfo('Profile Search Response ====>', JSON.stringify(response))
+    logInfo('Profile Search Response ==>')
     const userProfileResult = response.data.result.UserProfile
     if ((typeof userProfileResult !== 'undefined' && userProfileResult.length > 0)) {
     logInfo('Iterating the user profile')

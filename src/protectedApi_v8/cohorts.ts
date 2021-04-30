@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {Router } from 'express'
+import {json, Router } from 'express'
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
 import { logError, logInfo} from '../utils/logger'
@@ -118,14 +118,16 @@ export async function getAuthorsDetails(auth: string, contentId: string) {
     const response = await axios.post(API_END_POINTS.searchUserRegistry, { ...searchBody }, {
     ...axiosRequestConfig,
   })
-    if (response.data && response.data.result &&
-    response.data.result.UserProfile
-    && response.data.result.UserProfile.length) {
-      response.data.result.UserProfile.forEach((element: IUserProfile) => {
-        userlist.push(getUsers(element))
-      })
-    }
+    logInfo('Profile Search Response ====>', JSON.stringify(response))
+    const userProfileResult = response.data.result.UserProfile
+    if ((typeof userProfileResult !== 'undefined' && userProfileResult.length > 0)) {
+    logInfo('Iterating the user profile')
+    userProfileResult.forEach((element: IUserProfile) => {
+      userlist.push(getUsers(element))
+    })
   }
+  }
+    logInfo('cohorts profiles', JSON.stringify(userlist))
     return userlist
   } catch (error) {
     logError('ERROR WHILE FETCHING THE AUTHORS DETAILS --> ', error)

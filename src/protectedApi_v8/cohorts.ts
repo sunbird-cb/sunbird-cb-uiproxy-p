@@ -40,8 +40,9 @@ cohortsApi.get('/:cohortType/:contentId', async (req, res) => {
       return
     }
     if (cohortType === 'authors') {
-     res.status(200).json(getAuthorsDetails(auth, contentId))
-     return
+      const host = req.protocol + '://' + req.get('host')
+      const userList = await getAuthorsDetails(host, auth, contentId)
+      res.status(200).send(userList)
     } else {
       const url = `${API_END_POINTS.cohorts}/${contentId}/user/${extractUserIdFromRequest(
         req
@@ -85,11 +86,11 @@ cohortsApi.get('/:groupId', async (req, res) => {
   }
 })
 
-export async function getAuthorsDetails(auth: string, contentId: string) {
+export async function getAuthorsDetails(host:string, auth: string, contentId: string) {
   try {
-    logInfo('Hierarchy API=======>', API_END_POINTS.hierarchyApiEndPoint(contentId))
-    const prefixUrl = CONSTANTS.USER_SUNBIRD_DETAILS_API_BASE
-    const url = prefixUrl + '/apis/proxies/v8/action/content/v3/hierarchy/do_1132591765708554241127?hierarchyType=detail'
+
+    const url = host + `/apis/proxies/v8/action/content/v3/hierarchy/${contentId}?hierarchyType=detail`
+    logInfo("Hierarchy URL =======>", url)
     const hierarchyResponse = await axios.get(url, {
       ...axiosRequestConfig,
       headers: {

@@ -3,6 +3,8 @@ import { Router } from 'express'
 
 import { axiosRequestConfig } from '../configs/request.config'
 import { CONSTANTS } from '../utils/env'
+import { logError, logInfo } from '../utils/logger'
+import { ERROR } from '../utils/message'
 
 const API_END_POINTS = {
     addDataNode: `${CONSTANTS.FRAC_API_BASE}/fracapis/frac/addDataNode`,
@@ -125,6 +127,50 @@ fracApi.get('/getNodeById/:id/:type', async (req, res) => {
         res.status((err && err.response && err.response.status) || 500).send(
             (err && err.response && err.response.data) || {
                 error: unknownError,
+            }
+        )
+    }
+})
+
+fracApi.get('/:type/:key', async (req, res) => {
+    try {
+        const rootOrg = req.header('rootOrg')
+        const authToken = req.header('Authorization')
+        if (!rootOrg || !authToken) {
+            res.status(400).send(ERROR.ERROR_NO_ORG_DATA)
+            return
+        }
+        const key = req.params.key as string
+        const type = req.params.type as string
+        const searchBody = {
+            childCount : true,
+            childNodes: true,
+            searches: [
+              {
+                field : 'name',
+                keyword : key,
+                type,
+                },
+                  {
+                    field : 'status',
+                    keyword : 'VERIFIED',
+                    type,
+                      },
+                ],
+          }
+        logInfo('Req body========>', JSON.stringify(searchBody))
+        const response = await axios.post(API_END_POINTS.searchNodes, searchBody, {
+            ...axiosRequestConfig,
+            headers: {
+                Authorization: req.header('Authorization'),
+            },
+        })
+        res.status(200).send(response.data)
+    } catch (err) {
+        logError('ERROR --> ', err)
+        res.status((err && err.response && err.response.status) || 500).send(
+            (err && err.response && err.response.data) || {
+                error: ERROR.GENERAL_ERR_MSG,
             }
         )
     }

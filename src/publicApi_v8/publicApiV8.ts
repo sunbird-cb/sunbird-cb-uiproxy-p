@@ -3,6 +3,7 @@ import { CONSTANTS } from '../utils/env'
 import { proxyCreatorRoute } from '../utils/proxyCreator'
 import { signup } from './signup'
 import { publicTnc } from './tnc'
+import { workallocationPublic } from './workallocationPublic'
 
 export const publicApiV8 = express.Router()
 
@@ -17,3 +18,4 @@ publicApiV8.use('/assets',
 
 publicApiV8.use('/tnc', publicTnc)
 publicApiV8.use('/signup', signup)
+publicApiV8.use('/workallocation', workallocationPublic)

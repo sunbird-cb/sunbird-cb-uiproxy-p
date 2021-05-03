@@ -117,8 +117,7 @@ proxiesV8.use('/sunbirdigot/*',
 )
 
 proxiesV8.use('/content-retire/*',
-  // tslint:disable-next-line: max-line-length
-  proxyCreatorSunbirdSearch(express.Router(), `${CONSTANTS.KNOWLEDGE_MW_API_BASE}/v1/content/retire`)
+  proxyCreatorKnowledge(express.Router(), `${CONSTANTS.KNOWLEDGE_MW_API_BASE}/v1/content/retire`)
 )
 
 proxiesV8.use('/content-progres/*',

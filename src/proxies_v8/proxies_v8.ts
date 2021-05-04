@@ -116,8 +116,8 @@ proxiesV8.use('/sunbirdigot/*',
   proxyCreatorSunbirdSearch(express.Router(), `${CONSTANTS.SUNBIRD_PROXY_API_BASE}/composite/v1/search`)
 )
 
-proxiesV8.use('/content-retire/*',
-  proxyCreatorKnowledge(express.Router(), `${CONSTANTS.KNOWLEDGE_MW_API_BASE}/v1/content/retire`)
+proxiesV8.use('/v1/content/retire',
+  proxyCreatorKnowledge(express.Router(), `${CONSTANTS.KNOWLEDGE_MW_API_BASE}`)
 )
 
 proxiesV8.use('/content-progres/*',

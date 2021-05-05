@@ -188,7 +188,7 @@ export function proxyCreatorQML(route: Router, targetUrl: string, urlType: strin
 
 export function proxyContent(route: Router, targetUrl: string, _timeout = 10000): Router {
   route.all('/*', (req, res) => {
-    const url = removePrefix(${PROXY_SLUG}/private, req.originalUrl)
+    const url = removePrefix(`${PROXY_SLUG}/private`, req.originalUrl)
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorUpload', targetUrl)
     proxy.web(req, res, {

@@ -120,8 +120,8 @@ proxiesV8.use('/v1/content/retire',
   proxyCreatorKnowledge(express.Router(), `${CONSTANTS.KNOWLEDGE_MW_API_BASE}`)
 )
 
-proxiesV8.use('/content/v3/*',
-  proxyCreatorKnowledge(express.Router(), `${CONSTANTS.CONTENT_SERVICE_API_BASE}`)
+proxiesV8.use('/private/content/*',
+  proxyContent(express.Router(), `${CONSTANTS.CONTENT_SERVICE_API_BASE}`)
 )
 
 proxiesV8.use('/content-progres/*',

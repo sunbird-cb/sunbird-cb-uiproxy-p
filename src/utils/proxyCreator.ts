@@ -109,10 +109,8 @@ export function proxyCreatorSunbird(route: Router, targetUrl: string, _timeout =
 
 export function proxyCreatorKnowledge(route: Router, targetUrl: string, _timeout = 10000): Router {
   route.all('/*', (req, res) => {
-    console.log('targetUrl ', targetUrl)
      
     const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
-    console.log('URL', url)
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorKnowledge', targetUrl + url)
     proxy.web(req, res, {
@@ -179,6 +177,20 @@ export function proxyCreatorQML(route: Router, targetUrl: string, urlType: strin
     const url = removePrefix(`${PROXY_SLUG}`, originalUrl)
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorQML', targetUrl + url)
+    proxy.web(req, res, {
+      changeOrigin: true,
+      ignorePath: true,
+      target: targetUrl + url,
+    })
+  })
+  return route
+}
+
+export function proxyContent(route: Router, targetUrl: string, _timeout = 10000): Router {
+  route.all('/*', (req, res) => {
+    const url = removePrefix(${PROXY_SLUG}/private, req.originalUrl)
+    // tslint:disable-next-line: no-console
+    console.log('REQ_URL_ORIGINAL proxyCreatorUpload', targetUrl)
     proxy.web(req, res, {
       changeOrigin: true,
       ignorePath: true,

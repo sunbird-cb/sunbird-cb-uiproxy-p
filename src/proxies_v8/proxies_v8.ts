@@ -15,7 +15,8 @@ import {
   proxyCreatorSunbird,
   proxyCreatorSunbirdSearch,
   proxyCreatorToAppentUserId,
-  scormProxyCreatorRoute
+  scormProxyCreatorRoute,
+  proxyContent
 } from '../utils/proxyCreator'
 import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtract'
 

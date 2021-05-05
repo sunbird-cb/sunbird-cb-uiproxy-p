@@ -42,6 +42,7 @@ const badRequest = 'Bad request. UserId is a mandatory header'
 const spvPortal = 'spv'
 const mdoPortal = 'mdo'
 const cbpPortal = 'cbp'
+const cbcPortal = 'cbc'
 const spvDeptPath = '/spv/department'
 const spvDeptPathAction = '/spv/deptAction/userrole'
 const departmentType = '/departmentType'
@@ -211,6 +212,23 @@ portalApi.patch('/cbp/deptAction/userrole', async (req, res) => {
 // ------------------ FRAC APIs ----------------------
 portalApi.get('/frac/mydepartment', async (req, res) => {
     getMyDepartment('frac', req, res)
+})
+
+// ------------------ CBC APIs ----------------------
+portalApi.get('/cbc/mydepartment', async (req, res) => {
+    getMyDepartment(cbcPortal, req, res)
+})
+
+portalApi.patch('/cbc/department', async (req, res) => {
+    updateDepartment(cbcPortal, req, res)
+})
+
+portalApi.post('/cbc/deptAction/userrole', async (req, res) => {
+    addUserRole(cbcPortal, req, res)
+})
+
+portalApi.patch('/cbc/deptAction/userrole', async (req, res) => {
+    updateUserRole(cbcPortal, req, res)
 })
 
 // ------------------ Role APIs ----------------------

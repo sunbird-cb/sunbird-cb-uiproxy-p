@@ -109,7 +109,10 @@ export function proxyCreatorSunbird(route: Router, targetUrl: string, _timeout =
 
 export function proxyCreatorKnowledge(route: Router, targetUrl: string, _timeout = 10000): Router {
   route.all('/*', (req, res) => {
+    console.log('targetUrl ', targetUrl)
+     
     const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
+    console.log('URL', url)
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorKnowledge', targetUrl + url)
     proxy.web(req, res, {

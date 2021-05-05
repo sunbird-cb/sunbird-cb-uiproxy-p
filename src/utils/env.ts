@@ -145,6 +145,7 @@ export const CONSTANTS = {
   NOTIFY_PUBLISH_COMPLETED_BODY: 'The content #contentLink is successfully published.' +
   ' The content will be available for the users in few hours.',
   NOTIFY_EMAIL_TEMPLATE_ID: 'emailtemplate',
+  CONTENT_SERVICE_API_BASE: env.CONTENT_SERVICE_API_BASE || 'http://content-service:9000',
 }
 
 export const RESTRICTED_PYTHON_STMT: string[] = process.env.RESTRICTED_CHARACTERS

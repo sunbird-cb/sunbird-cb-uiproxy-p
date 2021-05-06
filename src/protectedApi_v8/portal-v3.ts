@@ -11,6 +11,8 @@ export const portalApi = express.Router()
 
 const API_END_POINTS = {
     accessValidator: (keyWord: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/portal/${keyWord}/isAdmin`,
+    cbcDeptByIdApi: (deptId: string, isUserInfoRequired: boolean) =>
+        `${CONSTANTS.SB_EXT_API_BASE_2}/portal/cbc/department/${deptId}?allUsers=${isUserInfoRequired}`,
     deptApi: (portalName: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/portal/${portalName}/department`,
     deptByIdApi: (deptId: string, isUserInfoRequired: boolean) =>
         `${CONSTANTS.SB_EXT_API_BASE_2}/portal/department/${deptId}?allUsers=${isUserInfoRequired}`,
@@ -43,6 +45,7 @@ const spvPortal = 'spv'
 const mdoPortal = 'mdo'
 const cbpPortal = 'cbp'
 const cbcPortal = 'cbc'
+const cbcDeptPath = '/cbc/department'
 const spvDeptPath = '/spv/department'
 const spvDeptPathAction = '/spv/deptAction/userrole'
 const departmentType = '/departmentType'
@@ -216,7 +219,7 @@ portalApi.get('/frac/mydepartment', async (req, res) => {
 
 // ------------------ CBC APIs ----------------------
 
-portalApi.get('/cbc/department', async (req, res) => {
+portalApi.get(cbcDeptPath, async (req, res) => {
     try {
         const userId = req.headers.wid as string
         if (!userId) {
@@ -224,6 +227,33 @@ portalApi.get('/cbc/department', async (req, res) => {
             return
         }
         const response = await axios.get(API_END_POINTS.deptApi(cbcPortal), {
+            ...axiosRequestConfig,
+            headers: req.headers,
+        })
+        res.status(response.status).send(response.data)
+    } catch (err) {
+        logError(failedToProcess + err)
+        res.status((err && err.response && err.response.status) || 500).send(
+            (err && err.response && err.response.data) || {
+                error: unknownError,
+            }
+        )
+    }
+})
+
+portalApi.get(cbcDeptPath + '/:deptId', async (req, res) => {
+    try {
+        const userId = req.headers.wid as string
+        const deptId = req.params.deptId as string
+        let isUserInfoRequired = req.query.allUsers as boolean
+        if (!isUserInfoRequired) {
+            isUserInfoRequired = false
+        }
+        if (!userId || !deptId) {
+            res.status(400).send(badRequest)
+            return
+        }
+        const response = await axios.get(API_END_POINTS.cbcDeptByIdApi(deptId, isUserInfoRequired), {
             ...axiosRequestConfig,
             headers: req.headers,
         })

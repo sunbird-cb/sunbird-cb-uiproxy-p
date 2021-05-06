@@ -126,8 +126,8 @@ proxiesV8.use('/private/content/*',
   proxyContent(express.Router(), `${CONSTANTS.CONTENT_SERVICE_API_BASE}`)
 )
 
-proxiesV8.use('/learner/private/content/*',
-proxyContentLearnerVM(express.Router(), `${CONSTANTS.VM_LEARNING_SERVICE_URL}`)
+proxiesV8.use('/learnervm/private/content/*',
+  proxyContentLearnerVM(express.Router(), `${CONSTANTS.VM_LEARNING_SERVICE_URL}`)
 )
 
 proxiesV8.use('/content-progres/*',

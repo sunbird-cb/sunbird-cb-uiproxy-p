@@ -215,6 +215,29 @@ portalApi.get('/frac/mydepartment', async (req, res) => {
 })
 
 // ------------------ CBC APIs ----------------------
+
+portalApi.get('/cbc/department', async (req, res) => {
+    try {
+        const userId = req.headers.wid as string
+        if (!userId) {
+            res.status(400).send(badRequest)
+            return
+        }
+        const response = await axios.get(API_END_POINTS.deptApi(cbcPortal), {
+            ...axiosRequestConfig,
+            headers: req.headers,
+        })
+        res.status(response.status).send(response.data)
+    } catch (err) {
+        logError(failedToProcess + err)
+        res.status((err && err.response && err.response.status) || 500).send(
+            (err && err.response && err.response.data) || {
+                error: unknownError,
+            }
+        )
+    }
+})
+
 portalApi.get('/cbc/mydepartment', async (req, res) => {
     getMyDepartment(cbcPortal, req, res)
 })

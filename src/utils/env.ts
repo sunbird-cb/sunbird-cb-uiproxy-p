@@ -146,6 +146,7 @@ export const CONSTANTS = {
   ' The content will be available for the users in few hours.',
   NOTIFY_EMAIL_TEMPLATE_ID: 'emailtemplate',
   CONTENT_SERVICE_API_BASE: env.CONTENT_SERVICE_API_BASE || 'http://content-service:9000',
+  VM_LEARNING_SERVICE_URL: env.VM_LEARNING_SERVICE_URL,
 }
 
 export const RESTRICTED_PYTHON_STMT: string[] = process.env.RESTRICTED_CHARACTERS

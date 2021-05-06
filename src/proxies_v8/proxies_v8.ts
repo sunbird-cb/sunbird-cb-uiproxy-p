@@ -16,7 +16,8 @@ import {
   proxyCreatorSunbirdSearch,
   proxyCreatorToAppentUserId,
   scormProxyCreatorRoute,
-  proxyContent
+  proxyContent,
+  proxyContentLearnerVM
 } from '../utils/proxyCreator'
 import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtract'
 
@@ -123,6 +124,10 @@ proxiesV8.use('/v1/content/retire',
 
 proxiesV8.use('/private/content/*',
   proxyContent(express.Router(), `${CONSTANTS.CONTENT_SERVICE_API_BASE}`)
+)
+
+proxiesV8.use('/learner/private/content/*',
+proxyContentLearnerVM(express.Router(), `${CONSTANTS.VM_LEARNING_SERVICE_URL}`)
 )
 
 proxiesV8.use('/content-progres/*',

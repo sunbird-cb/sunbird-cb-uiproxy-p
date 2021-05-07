@@ -76,16 +76,16 @@ proxiesV8.post('/upload/*', (req, res) => {
   }
 })
 
-proxiesV8.post('/content-service/private/*', (_req, res) => {
+proxiesV8.post('/private/upload/*', (_req, _res) => {
   if (_req.files && _req.files.data) {
-    const url = removePrefix('/proxies/v8/content-service/private', _req.originalUrl)
-    const file: UploadedFile = _req.files.data as UploadedFile
-    const formData = new FormData()
-    formData.append('file', Buffer.from(file.data), {
-      contentType: file.mimetype,
-      filename: file.name,
+    const _url = removePrefix('/proxies/v8/private/upload', _req.originalUrl)
+    const _file: UploadedFile = _req.files.data as UploadedFile
+    const _formData = new FormData()
+    _formData.append('file', Buffer.from(_file.data), {
+      contentType: _file.mimetype,
+      filename: _file.name,
     })
-    formData.submit(
+    _formData.submit(
       {
         headers: {
           // tslint:disable-next-line:max-line-length
@@ -96,20 +96,20 @@ proxiesV8.post('/content-service/private/*', (_req, res) => {
           'x-authenticated-userid': extractUserIdFromRequest(_req),
         },
         host: 'content-service',
-        path: url,
+        path: _url,
         port: 9000,
       },
-      (err, _response) => {
+      (_err, _response) => {
 
         _response.on('data', (_data) => {
-          if (!err && (_response.statusCode === 200 || _response.statusCode === 201)) {
-            res.send(JSON.parse(_data.toString('utf8')))
+          if (!_err && (_response.statusCode === 200 || _response.statusCode === 201)) {
+            _res.send(JSON.parse(_data.toString('utf8')))
           } else {
-            res.send(_data.toString('utf8'))
+            _res.send(_data.toString('utf8'))
           }
         })
-        if (err) {
-          res.send(err)
+        if (_err) {
+          _res.send(_err)
         }
 
       }

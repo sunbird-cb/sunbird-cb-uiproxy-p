@@ -115,7 +115,7 @@ proxiesV8.post('/private/upload/*', (_req, _res) => {
       }
     )
   } else {
-    res.send('File not found')
+    _res.send('File not found')
   }
 })
 

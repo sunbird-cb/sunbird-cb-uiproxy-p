@@ -8,6 +8,8 @@ import { logInfo } from '../utils/logger'
 import {
   ilpProxyCreatorRoute,
   // proxyCreatorDiscussion,
+  proxyContent,
+  proxyContentLearnerVM,
   proxyCreatorKnowledge,
   proxyCreatorLearner,
   proxyCreatorQML,
@@ -15,9 +17,7 @@ import {
   proxyCreatorSunbird,
   proxyCreatorSunbirdSearch,
   proxyCreatorToAppentUserId,
-  scormProxyCreatorRoute,
-  proxyContent,
-  proxyContentLearnerVM
+  scormProxyCreatorRoute
 } from '../utils/proxyCreator'
 import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtract'
 
@@ -76,10 +76,10 @@ proxiesV8.post('/upload/*', (req, res) => {
   }
 })
 
-proxiesV8.post('/content-service/private/*', (req, res) => {
-  if (req.files && req.files.data) {
-    const url = removePrefix('/proxies/v8/content-service/private', req.originalUrl)
-    const file: UploadedFile = req.files.data as UploadedFile
+proxiesV8.post('/content-service/private/*', (_req, res) => {
+  if (_req.files && _req.files.data) {
+    const url = removePrefix('/proxies/v8/content-service/private', _req.originalUrl)
+    const file: UploadedFile = _req.files.data as UploadedFile
     const formData = new FormData()
     formData.append('file', Buffer.from(file.data), {
       contentType: file.mimetype,
@@ -92,20 +92,20 @@ proxiesV8.post('/content-service/private/*', (req, res) => {
           Authorization: CONSTANTS.SB_API_KEY,
           org: 'dopt',
           rootorg: 'igot',
-          'x-authenticated-user-token': extractUserToken(req),
-          'x-authenticated-userid': extractUserIdFromRequest(req),
+          'x-authenticated-user-token': extractUserToken(_req),
+          'x-authenticated-userid': extractUserIdFromRequest(_req),
         },
         host: 'content-service',
         path: url,
         port: 9000,
       },
-      (err, response) => {
+      (err, _response) => {
 
-        response.on('data', (data) => {
-          if (!err && (response.statusCode === 200 || response.statusCode === 201)) {
-            res.send(JSON.parse(data.toString('utf8')))
+        _response.on('data', (_data) => {
+          if (!err && (_response.statusCode === 200 || _response.statusCode === 201)) {
+            res.send(JSON.parse(_data.toString('utf8')))
           } else {
-            res.send(data.toString('utf8'))
+            res.send(_data.toString('utf8'))
           }
         })
         if (err) {

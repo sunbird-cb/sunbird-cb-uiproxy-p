@@ -76,9 +76,9 @@ proxiesV8.post('/upload/*', (req, res) => {
   }
 })
 
-proxiesV8.post('/private/upload/*', (req, res) => {
+proxiesV8.post('/content-service/private/*', (req, res) => {
   if (req.files && req.files.data) {
-    const url = removePrefix('/proxies/v8/private/upload', req.originalUrl)
+    const url = removePrefix('/proxies/v8/content-service/private', req.originalUrl)
     const file: UploadedFile = req.files.data as UploadedFile
     const formData = new FormData()
     formData.append('file', Buffer.from(file.data), {

@@ -75,6 +75,50 @@ proxiesV8.post('/upload/*', (req, res) => {
     res.send('File not found')
   }
 })
+
+proxiesV8.post('/private/upload/*', (req, res) => {
+  if (req.files && req.files.data) {
+    const url = removePrefix('/proxies/v8/private/upload', req.originalUrl)
+    const file: UploadedFile = req.files.data as UploadedFile
+    const formData = new FormData()
+    formData.append('file', Buffer.from(file.data), {
+      contentType: file.mimetype,
+      filename: file.name,
+    })
+    formData.submit(
+      {
+        headers: {
+          // tslint:disable-next-line:max-line-length
+          Authorization: CONSTANTS.SB_API_KEY,
+          org: 'dopt',
+          rootorg: 'igot',
+          'x-authenticated-user-token': extractUserToken(req),
+          'x-authenticated-userid': extractUserIdFromRequest(req),
+        },
+        host: 'content-service',
+        path: url,
+        port: 9000,
+      },
+      (err, response) => {
+
+        response.on('data', (data) => {
+          if (!err && (response.statusCode === 200 || response.statusCode === 201)) {
+            res.send(JSON.parse(data.toString('utf8')))
+          } else {
+            res.send(data.toString('utf8'))
+          }
+        })
+        if (err) {
+          res.send(err)
+        }
+
+      }
+    )
+  } else {
+    res.send('File not found')
+  }
+})
+
 proxiesV8.use(
   '/content',
   proxyCreatorRoute(express.Router(), CONSTANTS.CONTENT_API_BASE + '/content')

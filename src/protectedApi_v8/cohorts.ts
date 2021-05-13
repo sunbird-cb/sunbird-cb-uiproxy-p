@@ -33,9 +33,9 @@ cohortsApi.get('/:cohortType/:contentId', async (req, res) => {
       return
     }
     const org = req.header('org')
-    const rootOrg = req.header('rootOrg')
+    const rootOrgValue = req.header('rootOrg')
     const auth = req.header('Authorization') as string
-    if (!org || !rootOrg) {
+    if (!org || !rootOrgValue) {
       res.status(400).send(ERROR.ERROR_NO_ORG_DATA)
       return
     }
@@ -50,7 +50,8 @@ cohortsApi.get('/:cohortType/:contentId', async (req, res) => {
       const response = await axios({
         ...axiosRequestConfig,
         headers: {
-          rootOrg,
+          Authorization: auth,
+          rootOrg : rootOrgValue
         },
         method: 'GET',
         url,

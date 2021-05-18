@@ -23,7 +23,6 @@ node('build-slave') {
 				
 			stage('docker-pre-build') {
               sh '''
-              cd $docker_file_path
               pwd
               docker build -f ./Dockerfile.build -t $docker_pre_build .
               docker run --name=$docker_pre_build $docker_pre_build && docker cp $docker_pre_build:/usr/src/app/dist.zip .

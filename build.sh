@@ -3,7 +3,7 @@
 set -eo pipefail
 
 build_tag=$1
-name='sun-ui-proxies'
+name=$2
 node=$3
 org=$4
 

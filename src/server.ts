@@ -14,7 +14,6 @@ import { authApi } from './authoring/content'
 import { getSessionConfig } from './configs/session.config'
 import { protectedApiV8 } from './protectedApi_v8/protectedApiV8'
 import { proxiesV8 } from './proxies_v8/proxies_v8'
-import { learnCourse } from './publicApi_v8/learnCourse'
 import { publicApiV8 } from './publicApi_v8/publicApiV8'
 import { CustomKeycloak } from './utils/custom-keycloak'
 import { CONSTANTS } from './utils/env'
@@ -47,7 +46,6 @@ export class Server {
     this.serverProxies()
     this.authoringApi()
     this.resetCookies()
-    this.learnApi()
     this.app.use(haltOnTimedOut)
   }
 
@@ -158,8 +156,5 @@ export class Server {
       res.clearCookie('connect.sid')
       res.status(200).send()
     })
-  }
-  private learnApi() {
-    this.app.use('/learn/course', learnCourse)
   }
 }

@@ -135,7 +135,7 @@ export async function getAuthorsDetails(host: string, auth: string, contentId: s
   }
 }
 
-cohortsApi.get('/autoenrollment/:courseId', async (req, res) => {
+cohortsApi.get('/user/autoenrollment/:courseId', async (req, res) => {
   try {
       const courseId = req.params.courseId
       const wid = req.headers.wid as string

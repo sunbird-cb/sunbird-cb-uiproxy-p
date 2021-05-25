@@ -7,6 +7,7 @@ import { ERROR } from '../utils/message'
 import { extractUserIdFromRequest } from '../utils/requestExtract'
 
 const API_END_POINTS = {
+  autoenrollment: (userId: string, courseId: string) => `${CONSTANTS.COHORTS_API_BASE}/v1/autoenrollment/${userId}/${courseId}`,
   cohorts: `${CONSTANTS.COHORTS_API_BASE}/v2/resources`,
   groupCohorts: (groupId: number) =>
     `${CONSTANTS.USER_PROFILE_API_BASE}/groups/${groupId}/users `,
@@ -21,6 +22,8 @@ const VALID_COHORT_TYPES = new Set([
   'educators',
   'top-performers',
 ])
+
+const unknownError = 'Failed due to unknown reason'
 
 export const cohortsApi = Router()
 
@@ -51,7 +54,7 @@ cohortsApi.get('/:cohortType/:contentId', async (req, res) => {
         ...axiosRequestConfig,
         headers: {
           Authorization: auth,
-          rootOrg : rootOrgValue
+          rootOrg : rootOrgValue,
         },
         method: 'GET',
         url,
@@ -61,7 +64,7 @@ cohortsApi.get('/:cohortType/:contentId', async (req, res) => {
   } catch (err) {
     res.status((err && err.response && err.response.status) || 500).send(
       (err && err.response && err.response.data) || {
-        error: 'Failed due to unknown reason',
+        error: unknownError,
       }
     )
   }
@@ -81,7 +84,7 @@ cohortsApi.get('/:groupId', async (req, res) => {
   } catch (err) {
     res.status((err && err.response && err.response.status) || 500).send(
       (err && err.response && err.response.data) || {
-        error: 'Failed due to unknown reason',
+        error: unknownError,
       }
     )
   }
@@ -132,6 +135,29 @@ export async function getAuthorsDetails(host: string, auth: string, contentId: s
   }
 }
 
+cohortsApi.get('/autoenrollment/:courseId', async (req, res) => {
+  try {
+      const courseId = req.params.courseId
+      const wid = req.headers.wid as string
+      const rootOrgValue = req.headers.rootorg
+      const auth = req.header('Authorization') as string
+      const response = await axios.get(API_END_POINTS.autoenrollment(wid, courseId), {
+          ...axiosRequestConfig,
+          headers: {
+            Authorization: auth,
+            rootOrg: rootOrgValue,
+          },
+      })
+      res.status(response.status).send(response.data)
+  } catch (err) {
+      logError(err)
+      res.status((err && err.response && err.response.status) || 500).send(
+          (err && err.response && err.response.data) || {
+              error: unknownError,
+          }
+      )
+  }
+})
 function getUsers(userprofile: IUserProfile): ICohortsUser {
 
   return {

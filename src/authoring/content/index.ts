@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { Request, Response, Router } from 'express'
-import { returnData } from 'src/utils/dataAlterer'
 import { AxiosRequestConfig } from '../../models/axios-request-config.model'
 import { logError, logInfo } from '../../utils/logger'
 import { ERROR } from '../constants/error'
@@ -9,6 +8,7 @@ import { decoder } from '../utils/decode'
 import { getOrg, getRootOrg } from '../utils/header'
 import { readJSONData } from '../utils/read-meta-and-json'
 import { uploadJSONData } from '../utils/upload-meta-and-json'
+import { returnData } from './../../../src/utils/dataAlterer'
 import { CONSTANTS } from './../../utils/env'
 import { IQuiz } from './../models/quiz'
 import { IDownloadS3Request, IDownloadS3Response } from './../models/response/custom-s3-download'
@@ -31,6 +31,8 @@ authApi.get('/hierarchy/:id', async (req: Request, res: Response) => {
     const org = getOrg(req)
     const rootOrg = getRootOrg(req)
     const data = await getHierarchy(req.params.id, org, rootOrg, req)
+    logInfo('Hierarchy Data = ' + JSON.stringify(data))
+    logInfo('Altered Data = ' + JSON.stringify(returnData(data, null, 'hierarchy')))
     res.status(200).send(data)
   } catch (ex) {
     logError(ex)

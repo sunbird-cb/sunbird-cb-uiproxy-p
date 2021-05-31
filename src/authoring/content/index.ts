@@ -193,7 +193,7 @@ authApi.get('/content/v3/read/:id', async (req: Request, res: Response) => {
   } as AxiosRequestConfig)
     .then((response) => {
       response = returnData(response, 'result')
-      console.log('Updated response = ' + response)
+      logInfo('Updated response = ' + response)
       res.status(response.status).send(response.data)
     })
     .catch((error) => {

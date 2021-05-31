@@ -191,7 +191,7 @@ authApi.get('/content/v3/read/:id', async (req: Request, res: Response) => {
     url: CONSTANTS.SUNBIRD_PROXY_URL + req.url,
   } as AxiosRequestConfig)
     .then((response) => {
-      response = returnData(response.data, 'result')
+      response.data = returnData(response.data, 'result')
       logInfo('Updated response = ' + JSON.stringify(response.data))
       res.status(response.status).send(response.data)
     })

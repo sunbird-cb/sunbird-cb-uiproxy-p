@@ -13,10 +13,7 @@ const contentMapper = { Collection: 'CourseUnit', CourseUnit: 'Collection', }
 // tslint:disable-next-line: no-any
 export const returnData = (data: any, masterObjectKey: any = null, level = 'flat') => {
 	console.log('Inside return String : ' + data.toString())
-	console.log('Inside return Data : ' + data)
-	const prasedData = JSON.parse(data)
-	console.log('Inside return Json Data : ' + prasedData)
-	console.log('Parsed Data result : ' + prasedData.result)
+	console.log('Inside return Data : ' + data.result)
 	console.log('Level : ' + level)
 	if (_.isEmpty(data)) {
 		return false

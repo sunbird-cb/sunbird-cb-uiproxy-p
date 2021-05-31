@@ -1,6 +1,7 @@
+/* tslint:disable */
 import _ from 'lodash'
 
-const contentMapper = {Collection: 'CourseUnit', CourseUnit: 'Collection', }
+const contentMapper = { Collection: 'CourseUnit', CourseUnit: 'Collection', }
 
 /**
  * [This function is used for altering the request and response structure based on keys]
@@ -11,20 +12,21 @@ const contentMapper = {Collection: 'CourseUnit', CourseUnit: 'Collection', }
 
 // tslint:disable-next-line: no-any
 export const returnData = (data: any, masterObjectKey: any = null, level = 'flat') => {
-    if (_.isEmpty(data)) {
-        return false
-    }
-    // tslint:disable-next-line: no-any
-    let responseData: any = ''
-    if (level === 'hierarchy') {
-responseData = hierarchy(data)
-    } else {
-        const dataToAlter = data[masterObjectKey]
-        const modifiedData = alterData(dataToAlter)
-        data[masterObjectKey] = modifiedData
-        responseData = data
-    }
-    return responseData
+	console.log('Inside return Data : ' + level)
+	if (_.isEmpty(data)) {
+		return false
+	}
+	// tslint:disable-next-line: no-any
+	let responseData: any = ''
+	if (level === 'hierarchy') {
+		responseData = hierarchy(data)
+	} else {
+		const dataToAlter = data[masterObjectKey]
+		const modifiedData = alterData(dataToAlter)
+		data[masterObjectKey] = modifiedData
+		responseData = data
+	}
+	return responseData
 }
 
 /**
@@ -33,16 +35,29 @@ responseData = hierarchy(data)
  * @return {[json]}         [description]
  */
 
- // tslint:disable-next-line: no-any
+// tslint:disable-next-line: no-any
 function hierarchy(data: any = null) {
-const alData = data.request.data.hierarchy
-for (const property in alData) {
-    if (alData[property].contentType === 'Collection' || alData[property].contentType === 'CourseUnit') {
-        data.request.data.hierarchy[property].contentType = contentMapper[data.request.data.hierarchy[property].contentType]
-        break
-    }
-}
-return data
+	if (data.request) {
+		const alData = data.request.data.hierarchy
+		for (const property in alData) {
+			if (alData[property].contentType === 'Collection' || alData[property].contentType === 'CourseUnit') {
+				data.request.data.hierarchy[property].contentType = contentMapper[data.request.data.hierarchy[property].contentType]
+				break
+			}
+		}
+	} else if (data.result) {
+		if (data.result.content && data.result.content.children && data.result.content.children.length > 0) {
+			data.result.content.children.forEach((element: any) => {
+				for (const property in element) {
+					if (element[property].contentType === 'Collection' || element[property].contentType === 'CourseUnit') {
+						element[property].contentType = contentMapper[element[property].contentType]
+						break
+					}
+				}
+			})
+		}
+	}
+	return data
 }
 
 /**
@@ -51,14 +66,14 @@ return data
  * @return {[json]}         [description]
  */
 
- // tslint:disable-next-line: no-any
+// tslint:disable-next-line: no-any
 function alterData(request: any = null) {
-    if (request == null)return false
-    const contentType = request.content.contentType
-    if (contentType === 'Collection') {
-        request.content.contentType = contentMapper[contentType]
-    } else if (contentType === 'CourseUnit') {
-        request.content.contentType = contentMapper[contentType]
-    }
-    return request
+	if (request == null) return false
+	const contentType = request.content.contentType
+	if (contentType === 'Collection') {
+		request.content.contentType = contentMapper[contentType]
+	} else if (contentType === 'CourseUnit') {
+		request.content.contentType = contentMapper[contentType]
+	}
+	return request
 }

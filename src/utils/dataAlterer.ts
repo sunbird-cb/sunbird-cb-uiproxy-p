@@ -83,9 +83,9 @@ export function alterData(request: any = null) {
 	}
 	return request
 }
-// tslint:enable
-
 // module.exports =
 // {
 // 	returnData
 // };
+
+// tslint:enable

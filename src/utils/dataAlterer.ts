@@ -51,6 +51,7 @@ function hierarchy(data: any = null) {
 	} else if (data.result) {
 		if (data.result.content && data.result.content.children && data.result.content.children.length > 0) {
 			data.result.content.children.forEach((element: any) => {
+				console.log('ContentType : ' + element.contentType)
 				if (element.contentType === 'Collection' || element.contentType === 'CourseUnit') {
 					element.contentType = contentMapper[element.contentType]
 				}

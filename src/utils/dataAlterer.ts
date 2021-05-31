@@ -12,7 +12,8 @@ const contentMapper = { Collection: 'CourseUnit', CourseUnit: 'Collection', }
 
 // tslint:disable-next-line: no-any
 export const returnData = (data: any, masterObjectKey: any = null, level = 'flat') => {
-	console.log('Inside return Data : ' + level)
+	console.log('Inside return Data : ' + data.toString())
+	console.log('Level : ' + level)
 	if (_.isEmpty(data)) {
 		return false
 	}
@@ -26,6 +27,8 @@ export const returnData = (data: any, masterObjectKey: any = null, level = 'flat
 		data[masterObjectKey] = modifiedData
 		responseData = data
 	}
+
+	console.log('Updated data : ' + responseData.toString())
 	return responseData
 }
 
@@ -54,6 +57,7 @@ function hierarchy(data: any = null) {
 			})
 		}
 	}
+	
 	return data
 }
 

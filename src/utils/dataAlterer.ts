@@ -10,7 +10,7 @@ const contentMapper = {Collection: 'CourseUnit', CourseUnit: 'Collection', }
  */
 
 // tslint:disable-next-line: no-any
-export function returnData(data: any, masterObjectKey: any = null, level = 'flat') {
+export const returnData = (data: any, masterObjectKey: any = null, level = 'flat') => {
     if (_.isEmpty(data)) {
         return false
     }
@@ -34,7 +34,7 @@ responseData = hierarchy(data)
  */
 
  // tslint:disable-next-line: no-any
-export function hierarchy(data: any = null) {
+function hierarchy(data: any = null) {
 const alData = data.request.data.hierarchy
 for (const property in alData) {
     if (alData[property].contentType === 'Collection' || alData[property].contentType === 'CourseUnit') {
@@ -52,7 +52,7 @@ return data
  */
 
  // tslint:disable-next-line: no-any
-export function alterData(request: any = null) {
+function alterData(request: any = null) {
     if (request == null)return false
     const contentType = request.content.contentType
     if (contentType === 'Collection') {

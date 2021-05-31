@@ -1,9 +1,6 @@
-// tslint:disable
-import _ from "lodash"
-const contentMapper = {
-	Collection: 'CourseUnit',
-	CourseUnit: 'Collection',
-}
+import _ from 'lodash'
+
+const contentMapper = {Collection: 'CourseUnit', CourseUnit: 'Collection', }
 
 /**
  * [This function is used for altering the request and response structure based on keys]
@@ -11,26 +8,23 @@ const contentMapper = {
  * @param  {[string]} masterObjectKey [First Level Key]
  * @return {[json]}         [description]
  */
+
+// tslint:disable-next-line: no-any
 export function returnData(data: any, masterObjectKey: any = null, level = 'flat') {
-	if (_.isEmpty(data)) {
-		return false
-	}
-
-	let responseData: any = ''
-	switch (level) {
-		case 'hierarchy':
-			responseData = hierarchy(data)
-			break
-
-		default:
-			const dataToAlter = data[masterObjectKey]
-			const modifiedData = alterData(dataToAlter)
-			data[masterObjectKey] = modifiedData
-			responseData = data
-			break
-	}
-
-	return responseData
+    if (_.isEmpty(data)) {
+        return false
+    }
+    // tslint:disable-next-line: no-any
+    let responseData: any = ''
+    if (level === 'hierarchy') {
+responseData = hierarchy(data)
+    } else {
+        const dataToAlter = data[masterObjectKey]
+        const modifiedData = alterData(dataToAlter)
+        data[masterObjectKey] = modifiedData
+        responseData = data
+    }
+    return responseData
 }
 
 /**
@@ -38,24 +32,17 @@ export function returnData(data: any, masterObjectKey: any = null, level = 'flat
  * @param  {[json]} data      [Mandatory]
  * @return {[json]}         [description]
  */
+
+ // tslint:disable-next-line: no-any
 export function hierarchy(data: any = null) {
-	const alData = data.request.data.hierarchy
-	for (const property in alData) {
-		switch (alData[property].contentType) {
-			case 'Collection':
-				data.request.data.hierarchy[property].contentType = contentMapper[data.request.data.hierarchy[property].contentType]
-				break
-
-			case 'CourseUnit':
-				data.request.data.hierarchy[property].contentType = contentMapper[data.request.data.hierarchy[property].contentType]
-				break
-
-			default:
-				break
-		}
-	}
-
-	return data
+const alData = data.request.data.hierarchy
+for (const property in alData) {
+    if (alData[property].contentType === 'Collection' || alData[property].contentType === 'CourseUnit') {
+        data.request.data.hierarchy[property].contentType = contentMapper[data.request.data.hierarchy[property].contentType]
+        break
+    }
+}
+return data
 }
 
 /**
@@ -63,29 +50,15 @@ export function hierarchy(data: any = null) {
  * @param  {[json]} request      [Mandatory]
  * @return {[json]}         [description]
  */
+
+ // tslint:disable-next-line: no-any
 export function alterData(request: any = null) {
-	if (request == null) {
-		return false
-	}
-
-	const contentType = request.content.contentType
-	switch (contentType) {
-		case 'Collection':
-			request.content.contentType = contentMapper[contentType]
-			break
-
-		case 'CourseUnit':
-			request.content.contentType = contentMapper[contentType]
-			break
-
-		default:
-			break
-	}
-	return request
+    if (request == null)return false
+    const contentType = request.content.contentType
+    if (contentType === 'Collection') {
+        request.content.contentType = contentMapper[contentType]
+    } else if (contentType === 'CourseUnit') {
+        request.content.contentType = contentMapper[contentType]
+    }
+    return request
 }
-// module.exports =
-// {
-// 	returnData
-// };
-
-// tslint:enable

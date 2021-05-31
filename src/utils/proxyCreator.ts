@@ -41,6 +41,25 @@ proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
   }
 })
 
+// tslint:disable-next-line: no-any
+proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
+  if (req.originalUrl.includes('/hierarchy') && !req.originalUrl.includes('/hierarchy/update')) {
+    // tslint:disable-next-line: no-console
+       console.log('Enter into the response of hierarchy')
+        // tslint:disable-next-line: no-any
+       proxyRes.on('data', (chunk: any) => {
+      // tslint:disable-next-line: no-console
+       console.log(JSON.stringify(chunk))
+       const  body = returnData(chunk, null, 'hierarchy')
+        // tslint:disable-next-line: no-console
+       console.log(JSON.stringify(body))
+       return _res
+        })
+  } else {
+    return _res
+  }
+})
+
 export function proxyCreatorRoute(route: Router, targetUrl: string, timeout = 10000): Router {
   route.all('/*', (req, res) => {
     const downloadKeyword = '/download/'

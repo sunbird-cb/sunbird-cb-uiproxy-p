@@ -196,11 +196,18 @@ profileDeatailsApi.get('/migrateRegistry', async (req, res) => {
     }
 })
 
+const channelParamMissing = 'Channel param is missing in personalDetails. Use DeptName as Channel value.'
+const emailAdressExist = 'Email address already exist'
+const failedToCreateUser = 'Not able to create User in SunBird'
+const failedToReadUser = 'Failed to read newly created user details.'
+const failedToCreateUserInOpenSaber = 'Not able to create User Registry in Opensaber'
+const createUserFailed = 'ERROR CREATING USER >'
+
 profileDeatailsApi.post('/createUser', async (req, res) => {
     try {
         const sbChannel = req.body.personalDetails.channel
         if (!sbChannel) {
-            res.status(400).send('Channel param is missing in personalDetails. Use DeptName as Channel value.')
+            res.status(400).send(channelParamMissing)
             return
         }
         const sbemail_ = req.body.personalDetails.email
@@ -215,7 +222,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
             url: API_END_POINTS.searchSb,
         })
         if (searchresponse.data.result.response.count > 0) {
-            res.status(400).send('Email address already exist')
+            res.status(400).send(emailAdressExist)
             return
         } else {
             const sbUserProfile: Partial<ISBUser> = {
@@ -229,7 +236,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
                 url: API_END_POINTS.createSb,
             })
             if (response.data.responseCode === 'CLIENT_ERROR') {
-                res.status(400).send('Not able to create User in SunBird')
+                res.status(400).send(failedToCreateUser)
                 return
             } else {
                 const sbUserId = response.data.result.userId
@@ -237,13 +244,14 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
                     ...axiosRequestConfig,
                     headers: {
                         Authorization: CONSTANTS.SB_API_KEY,
+                        // tslint:disable-next-line: all
                         'x-authenticated-user-token': extractUserToken(req),
                     },
                     method: 'GET',
                     url: API_END_POINTS.userRead(sbUserId),
                 })
                 if (sbUserReadResponse.data.params.status !== 'success') {
-                    res.status(500).send('Failed to read newly created user details.')
+                    res.status(500).send(failedToReadUser)
                     return
                 }
 
@@ -309,7 +317,7 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
                     url: API_END_POINTS.createOSUserRegistry(sbUserId),
                 })
                 if (userRegistryResponse.data === null) {
-                    res.status(500).send('Not able to create User Registry in Opensaber')
+                    res.status(500).send(failedToCreateUserInOpenSaber)
                 } else {
                     const sbUserProfileResponse: Partial<ISunbirdbUserResponse> = {
                         email: sbemail_, firstName: sbfirstName_, lastName: sblastName_,
@@ -320,7 +328,154 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
             }
         }
     } catch (err) {
-        logError('ERROR CREATING USER >', err)
+        logError(createUserFailed, err)
+        res.status((err && err.response && err.response.status) || 500).send(err)
+    }
+})
+
+profileDeatailsApi.post('/createUserV2WithRegistry', async (req, res) => {
+    try {
+        const sbChannel = req.body.personalDetails.channel
+        if (!sbChannel) {
+            res.status(400).send(channelParamMissing)
+            return
+        }
+        const sbemail_ = req.body.personalDetails.email
+        const sbemailVerified_ = true
+        const sbfirstName_ = req.body.personalDetails.firstName
+        const sblastName_ = req.body.personalDetails.lastName
+
+        const searchresponse = await axios({
+            ...axiosRequestConfig,
+            data: { request: { query: '', filters: { email: sbemail_.toLowerCase() } } },
+            method: 'POST',
+            url: API_END_POINTS.searchSb,
+        })
+        if (searchresponse.data.result.response.count > 0) {
+            res.status(400).send(emailAdressExist)
+            return
+        } else {
+            const sbUserProfile: Partial<ISBUser> = {
+                channel: sbChannel, email: sbemail_, emailVerified: sbemailVerified_, firstName: sbfirstName_,
+                lastName: sblastName_,
+            }
+            const response = await axios({
+                ...axiosRequestConfig,
+                data: { request: sbUserProfile },
+                method: 'POST',
+                url: API_END_POINTS.createSb,
+            })
+            if (response.data.responseCode === 'CLIENT_ERROR') {
+                res.status(400).send(failedToCreateUser)
+                return
+            } else {
+                const sbUserId = response.data.result.userId
+                const sbUserReadResponse = await axios({
+                    ...axiosRequestConfig,
+                    headers: {
+                        Authorization: CONSTANTS.SB_API_KEY,
+                        'x-authenticated-user-token': extractUserToken(req),
+                    },
+                    method: 'GET',
+                    url: API_END_POINTS.userRead(sbUserId),
+                })
+                if (sbUserReadResponse.data.params.status !== 'success') {
+                    res.status(500).send(failedToReadUser)
+                    return
+                }
+                const personalDetailsRegistry: IPersonalDetails = {
+                    firstname: sbfirstName_,
+                    primaryEmail: sbemail_,
+                    surname: sblastName_,
+                    userName: sbUserReadResponse.data.result.response.userName,
+                }
+                const userRegistry = getUserRegistry(personalDetailsRegistry, sbChannel)
+                const userRegistryResponse = await axios({
+                    ...axiosRequestConfig,
+                    data: userRegistry,
+                    headers: {
+                        wid: sbUserId,
+                    },
+                    method: 'POST',
+                    url: API_END_POINTS.createOSUserRegistry(sbUserId),
+                })
+                if (userRegistryResponse.data === null) {
+                    res.status(500).send(failedToCreateUserInOpenSaber)
+                } else {
+                    const sbUserProfileResponse: Partial<ISunbirdbUserResponse> = {
+                        email: sbemail_, firstName: sbfirstName_, lastName: sblastName_,
+                        userId: sbUserId,
+                    }
+                    res.send(sbUserProfileResponse)
+                }
+            }
+        }
+    } catch (err) {
+        logError(createUserFailed, err)
+        res.status((err && err.response && err.response.status) || 500).send(err)
+    }
+})
+
+profileDeatailsApi.post('/createUserV2WithoutRegistry', async (req, res) => {
+    try {
+        const sbChannel = req.body.personalDetails.channel
+        if (!sbChannel) {
+            res.status(400).send(channelParamMissing)
+            return
+        }
+        const sbemail_ = req.body.personalDetails.email
+        const sbemailVerified_ = true
+        const sbfirstName_ = req.body.personalDetails.firstName
+        const sblastName_ = req.body.personalDetails.lastName
+
+        const searchresponse = await axios({
+            ...axiosRequestConfig,
+            data: { request: { query: '', filters: { email: sbemail_.toLowerCase() } } },
+            method: 'POST',
+            url: API_END_POINTS.searchSb,
+        })
+        if (searchresponse.data.result.response.count > 0) {
+            res.status(400).send(emailAdressExist)
+            return
+        } else {
+            const sbUserProfile: Partial<ISBUser> = {
+                channel: sbChannel, email: sbemail_, emailVerified: sbemailVerified_, firstName: sbfirstName_,
+                lastName: sblastName_,
+            }
+            const response = await axios({
+                ...axiosRequestConfig,
+                data: { request: sbUserProfile },
+                method: 'POST',
+                url: API_END_POINTS.createSb,
+            })
+            if (response.data.responseCode === 'CLIENT_ERROR') {
+                res.status(400).send(failedToCreateUser)
+                return
+            } else {
+                const sbUserId = response.data.result.userId
+                const sbUserReadResponse = await axios({
+                    ...axiosRequestConfig,
+                    headers: {
+                        Authorization: CONSTANTS.SB_API_KEY,
+                        'x-authenticated-user-token': extractUserToken(req),
+                    },
+                    method: 'GET',
+                    url: API_END_POINTS.userRead(sbUserId),
+                })
+                if (sbUserReadResponse.data.params.status !== 'success') {
+                    res.status(500).send(failedToReadUser)
+                    return
+                } else {
+                    const sbUserProfileResponse: Partial<ISunbirdbUserResponse> = {
+                        email: sbemail_, firstName: sbfirstName_, lastName: sblastName_,
+                        userId: sbUserId,
+                    }
+                    res.send(sbUserProfileResponse)
+                }
+            }
+        }
+    } catch (err) {
+        logError(createUserFailed, err)
         res.status((err && err.response && err.response.status) || 500).send(err)
     }
 })

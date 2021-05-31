@@ -29,7 +29,7 @@ export const returnData = (data: any, masterObjectKey: any = null, level = 'flat
 		responseData = data
 	}
 
-	console.log('Updated data : ' + responseData.toString())
+	console.log('Updated data : ' + JSON.stringify(responseData))
 	return responseData
 }
 

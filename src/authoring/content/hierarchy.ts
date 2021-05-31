@@ -1,11 +1,9 @@
 import axios from 'axios'
 import { Request } from 'express'
-import { logInfo } from 'src/utils/logger'
 import { DEFAULT_META } from '../constants/default-meta'
 import { getHeaders } from '../utils/header'
 import { setOrgRootOrgAsQuery } from '../utils/org-rootOrg-query'
 import { IContent } from './../../models/content.model'
-import { returnData } from './../../utils/dataAlterer'
 import { CONSTANTS } from './../../utils/env'
 
 const hierarchyApi = {

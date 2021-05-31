@@ -170,7 +170,6 @@ authApi.post('/download/s3', async (req: Request, res: Response) => {
 
 authApi.post('/content/v3/create', async (request: Request, res: Response) => {
   returnData(request.body, 'request')
-  logInfo(JSON.stringify(request.body))
   axios({
     data: request.body,
     headers: request.headers,
@@ -192,8 +191,8 @@ authApi.get('/content/v3/read/:id', async (req: Request, res: Response) => {
     url: CONSTANTS.SUNBIRD_PROXY_URL + req.url,
   } as AxiosRequestConfig)
     .then((response) => {
-      response = returnData(response, 'result')
-      logInfo('Updated response = ' + response)
+      response = returnData(response.data, 'result')
+      logInfo('Updated response = ' + JSON.stringify(response.data))
       res.status(response.status).send(response.data)
     })
     .catch((error) => {

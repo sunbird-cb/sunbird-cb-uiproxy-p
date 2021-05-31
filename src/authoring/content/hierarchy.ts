@@ -4,6 +4,7 @@ import { DEFAULT_META } from '../constants/default-meta'
 import { getHeaders } from '../utils/header'
 import { setOrgRootOrgAsQuery } from '../utils/org-rootOrg-query'
 import { IContent } from './../../models/content.model'
+import { returnData } from './../../utils/dataAlterer'
 import { CONSTANTS } from './../../utils/env'
 
 const hierarchyApi = {
@@ -33,7 +34,9 @@ export async function getHierarchy(
   rootOrg: string,
   req: Request
 ): Promise<IContent> {
+  console.log('HI I am HERE')
   const data = await axios.get(hierarchyApi.v1(id, org, rootOrg), getHeaders(req))
+  console.log(returnData(data, null, 'hierarchy'))
   return data.data as IContent
 }
 

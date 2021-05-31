@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Request, Response, Router } from 'express'
+import { returnData } from 'src/utils/dataAlterer'
 import { AxiosRequestConfig } from '../../models/axios-request-config.model'
 import { logError } from '../../utils/logger'
 import { ERROR } from '../constants/error'
@@ -168,6 +169,7 @@ authApi.post('/download/s3', async (req: Request, res: Response) => {
 })
 
 authApi.post('/content/v3/create', async (request: Request, res: Response) => {
+  console.log(returnData(request.body, 'request'))
   axios({
     data: request.body,
     headers: request.headers,

@@ -17,6 +17,7 @@ import {
   proxyCreatorSunbird,
   proxyCreatorSunbirdSearch,
   proxyCreatorToAppentUserId,
+  proxyHierarchyKnowledge,
   scormProxyCreatorRoute
 } from '../utils/proxyCreator'
 import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtract'
@@ -195,9 +196,14 @@ proxiesV8.use([
   proxyCreatorQML(express.Router(), `${CONSTANTS.KONG_API_BASE}`, '/action/')
 )
 
+proxiesV8.use('/action/content/v3/hierarchy/*',
+  proxyHierarchyKnowledge(express.Router(), `${CONSTANTS.KNOWLEDGE_MW_API_BASE}`)
+)
+
 proxiesV8.use('/action/*',
   proxyCreatorKnowledge(express.Router(), `${CONSTANTS.KNOWLEDGE_MW_API_BASE}`)
 )
+
 
 proxiesV8.use('/learner/*',
   // tslint:disable-next-line: max-line-length

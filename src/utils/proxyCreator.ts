@@ -45,8 +45,7 @@ proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
 proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
   // tslint:disable-next-line: no-any
   const tempBody: any = []
-  if (req.originalUrl.includes('/hierarchy') && !req.originalUrl.includes('/hierarchy/update')
-  && req.originalUrl.includes('?mode=edit')) {
+  if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit')) {
     // tslint:disable-next-line: no-console
        console.log('Enter into the response of hierarchy')
         // tslint:disable-next-line: no-any
@@ -163,7 +162,6 @@ export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeo
     proxy.web(req, res, {
       changeOrigin: true,
       ignorePath: true,
-      selfHandleResponse : true,
       target: targetUrl + url,
     })
   })

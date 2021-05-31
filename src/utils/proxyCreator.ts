@@ -54,7 +54,7 @@ proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
         })
        proxyRes.on('end', () => {
           const tempdata = tempBody.toString()
-          const updateRes = returnData(tempdata, null, 'hierarchy')
+          const updateRes = returnData(JSON.parse(tempdata), null, 'hierarchy')
           _res.end(updateRes)
       })
   } else {

@@ -1,9 +1,9 @@
 import { Router } from 'express'
 import { createProxyServer } from 'http-proxy'
 import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtract'
+import {returnData } from './dataAlterer'
 import { CONSTANTS } from './env'
 import { logInfo } from './logger'
-import {returnData } from './dataAlterer'
 
 const proxyCreator = (timeout = 10000) => createProxyServer({
   timeout,
@@ -127,12 +127,12 @@ export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeo
   route.all('/*', (req, res) => {
 
     const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
-    if(url.includes('hierarchy/update')){
-      const data = returnData(req.body, null, 'hierarchy');
+    if (url.includes('hierarchy/update')) {
+      const data = returnData(req.body, null, 'hierarchy')
        // tslint:disable-next-line: no-console
       console.log('hierarchy update called!  ----> modified data')
        // tslint:disable-next-line: no-console
-      console.log(data)
+      console.log(JSON.stringify(data))
     }
     // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorKnowledge', targetUrl + url)

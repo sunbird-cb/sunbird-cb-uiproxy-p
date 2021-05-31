@@ -1,5 +1,5 @@
-import _ from 'lodash'
 // tslint:disable
+import _ from "lodash"
 const contentMapper = {
 	Collection: 'CourseUnit',
 	CourseUnit: 'Collection',
@@ -65,21 +65,21 @@ export function hierarchy(data: any = null) {
  */
 export function alterData(request: any = null) {
 	if (request == null) {
-	  return false
+		return false
 	}
 
 	const contentType = request.content.contentType
 	switch (contentType) {
 		case 'Collection':
-		  request.content.contentType = contentMapper[contentType]
-		  break
+			request.content.contentType = contentMapper[contentType]
+			break
 
 		case 'CourseUnit':
-		  request.content.contentType = contentMapper[contentType]
-		  break
+			request.content.contentType = contentMapper[contentType]
+			break
 
-	   default:
-		  break
+		default:
+			break
 	}
 	return request
 }

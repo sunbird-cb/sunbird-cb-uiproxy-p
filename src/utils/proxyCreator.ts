@@ -148,16 +148,13 @@ export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeo
   route.all('/*', (req, res) => {
     const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
     if (url.includes('hierarchy/update')) {
-      // tslint:disable-next-line: no-console
-      console.log('hierarchy request Body : ' + req.body)
       const data = returnData(req.body, null, 'hierarchy')
-       // tslint:disable-next-line: no-console
-      console.log('hierarchy update called!  ----> modified data')
-       // tslint:disable-next-line: no-console
-      console.log(JSON.stringify(data))
+      req.body = data
+      // tslint:disable-next-line: no-console
+      console.log(JSON.stringify(req.body))
     }
      // tslint:disable-next-line: no-console
-     console.log('REQ_URL_ORIGINAL proxyCreatorKnowledge', targetUrl + url)
+    console.log('REQ_URL_ORIGINAL proxyCreatorKnowledge', targetUrl + url)
     if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit')) {
       proxy.web(req, res,  {
         changeOrigin: true,
@@ -171,7 +168,7 @@ export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeo
         ignorePath: true,
         target: targetUrl + url,
       })
-    }    
+    }
   })
   return route
 }

@@ -31,8 +31,6 @@ authApi.get('/hierarchy/:id', async (req: Request, res: Response) => {
     const org = getOrg(req)
     const rootOrg = getRootOrg(req)
     const data = await getHierarchy(req.params.id, org, rootOrg, req)
-    logInfo('Hierarchy Data = ' + JSON.stringify(data))
-    logInfo('Altered Data = ' + JSON.stringify(returnData(data, null, 'hierarchy')))
     res.status(200).send(data)
   } catch (ex) {
     logError(ex)
@@ -171,7 +169,8 @@ authApi.post('/download/s3', async (req: Request, res: Response) => {
 })
 
 authApi.post('/content/v3/create', async (request: Request, res: Response) => {
-  logInfo(JSON.stringify(returnData(request.body, 'request')))
+  returnData(request.body, 'request')
+  logInfo(JSON.stringify(request.body))
   axios({
     data: request.body,
     headers: request.headers,
@@ -193,6 +192,8 @@ authApi.get('/content/v3/read/:id', async (req: Request, res: Response) => {
     url: CONSTANTS.SUNBIRD_PROXY_URL + req.url,
   } as AxiosRequestConfig)
     .then((response) => {
+      response = returnData(response, 'result')
+      console.log('Updated response = ' + response)
       res.status(response.status).send(response.data)
     })
     .catch((error) => {

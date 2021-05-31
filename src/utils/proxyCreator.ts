@@ -150,8 +150,6 @@ export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeo
     if (url.includes('hierarchy/update')) {
       const data = returnData(req.body, null, 'hierarchy')
       req.body = data
-      // tslint:disable-next-line: no-console
-      console.log(JSON.stringify(req.body))
     }
      // tslint:disable-next-line: no-console
     console.log('REQ_URL_ORIGINAL proxyCreatorKnowledge', targetUrl + url)

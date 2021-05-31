@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { createProxyServer } from 'http-proxy'
 import { extractUserIdFromRequest, extractUserToken } from '../utils/requestExtract'
+import {returnData } from './dataAlterer'
 import { CONSTANTS } from './env'
 import { logInfo } from './logger'
 
@@ -37,6 +38,27 @@ proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
     if (req.session) {
       req.session.nodebb_authorization_token = nodebb_auth_token
     }
+  }
+})
+
+// tslint:disable-next-line: no-any
+proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
+  // tslint:disable-next-line: no-any
+  const tempBody: any = []
+  if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit')) {
+    // tslint:disable-next-line: no-console
+       console.log('Enter into the response of hierarchy')
+        // tslint:disable-next-line: no-any
+       proxyRes.on('data', (chunk: any) => {
+      tempBody.push(chunk)
+        })
+       proxyRes.on('end', () => {
+          const tempdata = tempBody.toString()
+          const updateRes = returnData(JSON.parse(tempdata), null, 'hierarchy')
+          _res.end(JSON.stringify(updateRes))
+      })
+  } else {
+    return _res
   }
 })
 
@@ -118,6 +140,33 @@ export function proxyCreatorKnowledge(route: Router, targetUrl: string, _timeout
       ignorePath: true,
       target: targetUrl + url,
     })
+  })
+  return route
+}
+
+export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeout = 10000): Router {
+  route.all('/*', (req, res) => {
+    const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
+    if (url.includes('hierarchy/update')) {
+      const data = returnData(req.body, null, 'hierarchy')
+      req.body = data
+    }
+     // tslint:disable-next-line: no-console
+    console.log('REQ_URL_ORIGINAL proxyCreatorKnowledge', targetUrl + url)
+    if (req.originalUrl.includes('/hierarchy') && req.originalUrl.includes('?mode=edit')) {
+      proxy.web(req, res,  {
+        changeOrigin: true,
+        ignorePath: true,
+        selfHandleResponse : true,
+        target: targetUrl + url,
+      })
+    } else {
+      proxy.web(req, res,  {
+        changeOrigin: true,
+        ignorePath: true,
+        target: targetUrl + url,
+      })
+    }
   })
   return route
 }

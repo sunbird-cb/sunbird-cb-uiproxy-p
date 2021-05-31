@@ -43,18 +43,24 @@ proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
 
 // tslint:disable-next-line: no-any
 proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
+  // tslint:disable-next-line: no-any
+  const tempBody: any = []
   if (req.originalUrl.includes('/hierarchy') && !req.originalUrl.includes('/hierarchy/update')) {
     // tslint:disable-next-line: no-console
        console.log('Enter into the response of hierarchy')
         // tslint:disable-next-line: no-any
        proxyRes.on('data', (chunk: any) => {
-      // tslint:disable-next-line: no-console
-       console.log(JSON.stringify(chunk))
-       const  body = returnData(chunk, null, 'hierarchy')
-        // tslint:disable-next-line: no-console
-       console.log(JSON.stringify(body))
-       return _res
+      tempBody.push(chunk)
         })
+       proxyRes.on('end', () => {
+          const tempdata = tempBody.toString()
+          // tslint:disable-next-line: no-console
+          console.log('Tempdata form End = ' + tempdata)
+          // tslint:disable-next-line: no-console
+          console.log('res from proxied server: ', returnData(JSON.parse(tempdata), null, 'hierarchy'))
+          const updateRes = returnData(tempdata, null, 'hierarchy')
+          _res.end(updateRes)
+      })
   } else {
     return _res
   }
@@ -158,6 +164,7 @@ export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeo
     proxy.web(req, res, {
       changeOrigin: true,
       ignorePath: true,
+      selfHandleResponse : true,
       target: targetUrl + url,
     })
   })

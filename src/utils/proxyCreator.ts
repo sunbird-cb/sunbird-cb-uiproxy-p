@@ -45,7 +45,8 @@ proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
 proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
   // tslint:disable-next-line: no-any
   const tempBody: any = []
-  if (req.originalUrl.includes('/hierarchy') && !req.originalUrl.includes('/hierarchy/update')) {
+  if (req.originalUrl.includes('/hierarchy') && !req.originalUrl.includes('/hierarchy/update')
+  && req.originalUrl.includes('?mode=edit')) {
     // tslint:disable-next-line: no-console
        console.log('Enter into the response of hierarchy')
         // tslint:disable-next-line: no-any
@@ -149,6 +150,8 @@ export function proxyHierarchyKnowledge(route: Router, targetUrl: string, _timeo
 
     const url = removePrefix(`${PROXY_SLUG}`, req.originalUrl)
     if (url.includes('hierarchy/update')) {
+      // tslint:disable-next-line: no-console
+      console.log('hierarchy request Body : ' + req.body)
       const data = returnData(req.body, null, 'hierarchy')
        // tslint:disable-next-line: no-console
       console.log('hierarchy update called!  ----> modified data')

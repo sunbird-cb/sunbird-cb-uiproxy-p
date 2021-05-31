@@ -12,9 +12,6 @@ const contentMapper = { Collection: 'CourseUnit', CourseUnit: 'Collection', }
 
 // tslint:disable-next-line: no-any
 export const returnData = (data: any, masterObjectKey: any = null, level = 'flat') => {
-	console.log('Inside return String : ' + data.toString())
-	console.log('Inside return Data : ' + data.result)
-	console.log('Level : ' + level)
 	if (_.isEmpty(data)) {
 		return false
 	}
@@ -28,8 +25,6 @@ export const returnData = (data: any, masterObjectKey: any = null, level = 'flat
 		data[masterObjectKey] = modifiedData
 		responseData = data
 	}
-
-	console.log('Updated data : ' + JSON.stringify(responseData))
 	return responseData
 }
 
@@ -41,7 +36,6 @@ export const returnData = (data: any, masterObjectKey: any = null, level = 'flat
 
 // tslint:disable-next-line: no-any
 function hierarchy(data: any = null) {
-	console.log('Checking Data : ' + data.result)
 	if (data.request) {
 		const alData = data.request.data.hierarchy
 		for (const property in alData) {
@@ -53,7 +47,6 @@ function hierarchy(data: any = null) {
 	} else if (data.result) {
 		if (data.result.content && data.result.content.children && data.result.content.children.length > 0) {
 			data.result.content.children.forEach((element: any) => {
-				console.log('ContentType : ' + element.contentType)
 				if (element.contentType === 'Collection' || element.contentType === 'CourseUnit') {
 					element.contentType = contentMapper[element.contentType]
 				}

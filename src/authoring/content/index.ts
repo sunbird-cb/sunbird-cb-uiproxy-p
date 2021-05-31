@@ -2,7 +2,7 @@ import axios from 'axios'
 import { Request, Response, Router } from 'express'
 import { AxiosRequestConfig } from '../../models/axios-request-config.model'
 import { returnData } from '../../utils/dataAlterer'
-import { logError, logInfo } from '../../utils/logger'
+import { logError } from '../../utils/logger'
 import { ERROR } from '../constants/error'
 import { IUploadS3Request, IUploadS3Response } from '../models/response/custom-s3-upload'
 import { decoder } from '../utils/decode'
@@ -191,8 +191,9 @@ authApi.get('/content/v3/read/:id', async (req: Request, res: Response) => {
     url: CONSTANTS.SUNBIRD_PROXY_URL + req.url,
   } as AxiosRequestConfig)
     .then((response) => {
-      response.data = returnData(response.data, 'result')
-      logInfo('Updated response = ' + JSON.stringify(response.data))
+      if (response.data.params.status === 'successful') {
+        response.data = returnData(response.data, 'result')
+      }
       res.status(response.status).send(response.data)
     })
     .catch((error) => {

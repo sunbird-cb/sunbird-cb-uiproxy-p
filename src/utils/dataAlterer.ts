@@ -44,7 +44,7 @@ function hierarchy(data: any = null) {
 				break
 			}
 		}
-	} else if (data.result) {
+	} else if (data.params.status === 'successful' && data.result) {
 		if (data.result.content && data.result.content.children && data.result.content.children.length > 0) {
 			data.result.content.children.forEach((element: any) => {
 				if (element.contentType === 'Collection' || element.contentType === 'CourseUnit') {

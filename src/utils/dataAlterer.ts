@@ -40,6 +40,7 @@ export const returnData = (data: any, masterObjectKey: any = null, level = 'flat
 
 // tslint:disable-next-line: no-any
 function hierarchy(data: any = null) {
+	console.log('Checking Data : ' + data.result)
 	if (data.request) {
 		const alData = data.request.data.hierarchy
 		for (const property in alData) {

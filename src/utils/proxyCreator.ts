@@ -56,9 +56,9 @@ proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
           const tempdata = tempBody.toString()
           // tslint:disable-next-line: no-console
           console.log('Tempdata form End = ' + tempdata)
-          // tslint:disable-next-line: no-console
-          console.log('res from proxied server: ', returnData(JSON.parse(tempdata), null, 'hierarchy'))
           const updateRes = returnData(tempdata, null, 'hierarchy')
+          // tslint:disable-next-line: no-console
+          console.log('Updated Response = ' + JSON.stringify(updateRes))
           _res.end(updateRes)
       })
   } else {

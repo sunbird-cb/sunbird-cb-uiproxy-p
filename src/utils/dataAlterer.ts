@@ -1,5 +1,5 @@
 import _ from 'lodash'
-
+// tslint:disable
 const contentMapper = {
 	Collection: 'CourseUnit',
 	CourseUnit: 'Collection',
@@ -83,6 +83,7 @@ export function alterData(request: any = null) {
 	}
 	return request
 }
+// tslint:enable
 
 // module.exports =
 // {

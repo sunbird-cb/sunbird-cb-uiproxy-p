@@ -274,7 +274,8 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
                     const welcomeMailRequest = {
                         allowedLoging: 'You can use your email to Login',
                         body: 'Hello',
-                        emailTemplateType: 'welcome',
+                        emailTemplateType: 'iGotWelcome',
+                        firstName: sbUserProfile.firstName,
                         link: passwordResetResponse.data.result.link,
                         mode: 'email',
                         orgName: sbChannel,

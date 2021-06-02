@@ -10,13 +10,14 @@ import { extractUserIdFromRequest } from '../utils/requestExtract'
 const workallocationV1Path = 'v1/workallocation'
 const workallocationV2Path = 'v2/workallocation'
 const API_END_POINTS = {
-    addAllocationEndPoint: (path : string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/add`,
-    addWorkOrderEndPoint: (path : string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/add/workorder`,
+    addAllocationEndPoint: (path: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/add`,
+    addWorkOrderEndPoint: (path: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/add/workorder`,
+    copyWorkOrderEndPoint: (path: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/copy/workorder`,
     getUsersEndPoint: `${CONSTANTS.SB_EXT_API_BASE_2}/v1/workallocation/getUsers`,
-    getWorkOrderById: (path : string, id : string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/getWorkOrderById/${id}`,
-    getWorkOrders: (path : string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/getWorkOrders`,
+    getWorkOrderById: (path: string, id: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/getWorkOrderById/${id}`,
+    getWorkOrders: (path: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/getWorkOrders`,
     updateAllocationEndPoint: `${CONSTANTS.SB_EXT_API_BASE_2}/v1/workallocation/update`,
-    updateWorkOrder: (path : string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/update/workorder`,
+    updateWorkOrder: (path: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/update/workorder`,
     userAutoCompleteEndPoint: (searchTerm: string) =>
     `${CONSTANTS.SB_EXT_API_BASE_2}/v1/workallocation/users/autocomplete?searchTerm=${searchTerm}`,
 }
@@ -127,9 +128,7 @@ workAllocationApi.get('/user/autocomplete/:searchTerm', async (req, res) => {
     }
 })
 
-
 // ------------------ Work allocation v2 API'S ----------------------
-
 
 workAllocationApi.post('/v2/add', async (req, res) => {
     try {
@@ -247,6 +246,34 @@ workAllocationApi.get('/getWorkOrderById/:workOrderId', async (req, res) => {
             {
                 ...axiosRequestConfig,
                 headers: req.headers,
+            }
+        )
+        res.status(response.status).send(response.data)
+    } catch (err) {
+        logError(Error + err)
+        res.status((err && err.response && err.response.status) || 500).send(
+            (err && err.response && err.response.data) || {
+                error: ERROR.GENERAL_ERR_MSG,
+            }
+        )
+    }
+})
+
+workAllocationApi.post('/copy/workOrder', async (req, res) => {
+    try {
+        const userId = extractUserIdFromRequest(req)
+        if (!userId) {
+            res.status(400).send(userIdFailedMessage)
+            return
+        }
+        const response = await axios.post(
+            API_END_POINTS.copyWorkOrderEndPoint(workallocationV2Path),
+            req.body,
+            {
+                ...axiosRequestConfig,
+                headers: {
+                    userId,
+                },
             }
         )
         res.status(response.status).send(response.data)

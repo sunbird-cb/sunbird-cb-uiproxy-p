@@ -27,6 +27,7 @@ const API_END_POINTS = {
         `${CONSTANTS.SB_EXT_API_BASE_2}/portal/${portalName}/mydepartment?allUsers=${isUserInfoRequired}`,
     roleApi: `${CONSTANTS.SB_EXT_API_BASE_2}/portal/deptRole`,
     roleByTypeApi: (deptType: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/portal/deptRole/${deptType}`,
+    spvDeleteDepartmentApi: (deptId: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/portal/spv/${deptId}`,
     spvDeptApi: `${CONSTANTS.SB_EXT_API_BASE_2}/portal/spv/department`,
     spvDeptByIdApi: (deptId: string, isUserInfoRequired: boolean) =>
         `${CONSTANTS.SB_EXT_API_BASE_2}/portal/spv/department/${deptId}?allUsers=${isUserInfoRequired}`,
@@ -46,6 +47,7 @@ const mdoPortal = 'mdo'
 const cbpPortal = 'cbp'
 const cbcPortal = 'cbc'
 const cbcDeptPath = '/cbc/department'
+const spvDeleteDepartment = '/spv/deleteDepartment'
 const spvDeptPath = '/spv/department'
 const spvDeptPathAction = '/spv/deptAction/userrole'
 const departmentType = '/departmentType'
@@ -154,6 +156,33 @@ portalApi.post(spvDeptPath, async (req, res) => {
                 wid: userId,
                 xAuthUser: xAuth[1],
             },
+        })
+        res.status(response.status).send(response.data)
+    } catch (err) {
+        logError(failedToProcess + err)
+        res.status((err && err.response && err.response.status) || 500).send(
+            (err && err.response && err.response.data) || {
+                error: unknownError,
+            }
+        )
+    }
+})
+
+portalApi.delete(spvDeleteDepartment + '/:deptId', async (req, res) => {
+    try {
+        const userId = req.headers.wid as string
+        const deptId = req.params.deptId as string
+        let isUserInfoRequired = req.query.allUsers as boolean
+        if (!isUserInfoRequired) {
+            isUserInfoRequired = false
+        }
+        if (!userId || !deptId) {
+            res.status(400).send(badRequest)
+            return
+        }
+        const response = await axios.delete(API_END_POINTS.spvDeleteDepartmentApi(deptId), {
+            ...axiosRequestConfig,
+            headers: req.headers,
         })
         res.status(response.status).send(response.data)
     } catch (err) {

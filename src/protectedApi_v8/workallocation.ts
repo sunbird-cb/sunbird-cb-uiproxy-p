@@ -12,7 +12,7 @@ const workallocationV2Path = 'v2/workallocation'
 const API_END_POINTS = {
     addAllocationEndPoint: (path: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/add`,
     addWorkOrderEndPoint: (path: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/add/workorder`,
-    copyWorkOrderEndPoint: (path: string, workOrderId: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/copy/workorder/${workOrderId}`,
+    copyWorkOrderEndPoint: (path: string, workOrderId: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/copy/workOrder/${workOrderId}`,
     getUserBasicDetails: (userId: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${workallocationV2Path}/user/basicInfo/${userId}`,
     getUsersEndPoint: `${CONSTANTS.SB_EXT_API_BASE_2}/v1/workallocation/getUsers`,
     getWorkOrderById: (path: string, id: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/getWorkOrderById/${id}`,

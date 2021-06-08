@@ -267,12 +267,18 @@ workAllocationApi.get('/copy/workOrder/:workOrderId', async (req, res) => {
             res.status(400).send(workOrderIdFailedMessage)
             return
         }
-        const response = await axios.post(
+        const userId = extractUserIdFromRequest(req)
+        if (!userId) {
+            res.status(400).send(userIdFailedMessage)
+            return
+        }
+        const response = await axios.get(
             API_END_POINTS.copyWorkOrderEndPoint(workallocationV2Path, workOrderId),
-            req.body,
             {
                 ...axiosRequestConfig,
-                headers: req.headers,
+                headers: {
+                    userId,
+                },
             }
         )
         res.status(response.status).send(response.data)

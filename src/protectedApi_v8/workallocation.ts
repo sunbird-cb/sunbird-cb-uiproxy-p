@@ -16,6 +16,7 @@ const API_END_POINTS = {
     getPdf: (id: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/getWOPdf/${id}`,
     getUserBasicDetails: (userId: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${workallocationV2Path}/user/basicInfo/${userId}`,
     getUsersEndPoint: `${CONSTANTS.SB_EXT_API_BASE_2}/v1/workallocation/getUsers`,
+    getWorkAllocationById: (path: string, id: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/getWorkAllocationById/${id}`,
     getWorkOrderById: (path: string, id: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/getWorkOrderById/${id}`,
     getWorkOrders: (path: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/getWorkOrders`,
     updateAllocationEndPoint: `${CONSTANTS.SB_EXT_API_BASE_2}/v1/workallocation/update`,
@@ -28,6 +29,7 @@ export const workAllocationApi = Router()
 
 const failedToProcess = 'Failed to process the request. '
 const userIdFailedMessage = 'NO_USER_ID'
+const workAllocationIdFailedMessage = 'NO_WORK_ALLOCATION_ID'
 const workOrderIdFailedMessage = 'NO_WORKORDER_ID'
 
 workAllocationApi.post('/add', async (req, res) => {
@@ -245,6 +247,31 @@ workAllocationApi.get('/getWorkOrderById/:workOrderId', async (req, res) => {
         }
         const response = await axios.get(
             API_END_POINTS.getWorkOrderById(workallocationV2Path, workOrderId),
+            {
+                ...axiosRequestConfig,
+                headers: req.headers,
+            }
+        )
+        res.status(response.status).send(response.data)
+    } catch (err) {
+        logError(Error + err)
+        res.status((err && err.response && err.response.status) || 500).send(
+            (err && err.response && err.response.data) || {
+                error: ERROR.GENERAL_ERR_MSG,
+            }
+        )
+    }
+})
+
+workAllocationApi.get('/getWorkAllocationById/:workAllocationId', async (req, res) => {
+    try {
+        const workAllocationId = req.params.workAllocationId
+        if (!workAllocationId) {
+            res.status(400).send(workAllocationIdFailedMessage)
+            return
+        }
+        const response = await axios.get(
+            API_END_POINTS.getWorkAllocationById(workallocationV2Path, workAllocationId),
             {
                 ...axiosRequestConfig,
                 headers: req.headers,

@@ -13,6 +13,7 @@ const API_END_POINTS = {
     addAllocationEndPoint: (path: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/add`,
     addWorkOrderEndPoint: (path: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/add/workorder`,
     copyWorkOrderEndPoint: (path: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/copy/workOrder`,
+    getPdf: (id: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/getWOPdf/${id}`,
     getUserBasicDetails: (userId: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${workallocationV2Path}/user/basicInfo/${userId}`,
     getUsersEndPoint: `${CONSTANTS.SB_EXT_API_BASE_2}/v1/workallocation/getUsers`,
     getWorkOrderById: (path: string, id: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/getWorkOrderById/${id}`,
@@ -297,6 +298,31 @@ workAllocationApi.get('/getUserBasicInfo/:userId', async (req, res) => {
         }
         const response = await axios.get(
             API_END_POINTS.getUserBasicDetails(userId),
+            {
+                ...axiosRequestConfig,
+                headers: req.headers,
+            }
+        )
+        res.status(response.status).send(response.data)
+    } catch (err) {
+        logError(Error + err)
+        res.status((err && err.response && err.response.status) || 500).send(
+            (err && err.response && err.response.data) || {
+                error: ERROR.GENERAL_ERR_MSG,
+            }
+        )
+    }
+})
+
+workAllocationApi.get('/getWOPdf/:workOrderId', async (req, res) => {
+    try {
+        const workOrderId = req.params.workOrderId
+        if (!workOrderId) {
+            res.status(400).send(workOrderIdFailedMessage)
+            return
+        }
+        const response = await axios.get(
+            API_END_POINTS.getPdf(workOrderId),
             {
                 ...axiosRequestConfig,
                 headers: req.headers,

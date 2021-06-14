@@ -196,12 +196,14 @@ workAllocationApi.post('/update/workorder', async (req, res) => {
             res.status(400).send(userIdFailedMessage)
             return
         }
+        const auth = req.header('Authorization') as string
         const response = await axios.post(
             API_END_POINTS.updateWorkOrder(workallocationV2Path),
             req.body,
             {
                 ...axiosRequestConfig,
                 headers: {
+                    Authorization: auth,
                     userId,
                 },
             }

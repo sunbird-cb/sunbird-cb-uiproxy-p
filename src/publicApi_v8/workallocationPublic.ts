@@ -16,7 +16,9 @@ workallocationPublic.get('/getWaPdf/:waId', async (req, res) => {
         const response = await axios.get(API_END_POINTS.getWAPdf(waId), {
             ...axiosRequestConfig,
             headers: {
+                Accept: 'application/pdf',
             },
+            responseType: 'arraybuffer',
         })
         res.status(response.status).send(response.data)
     } catch (err) {

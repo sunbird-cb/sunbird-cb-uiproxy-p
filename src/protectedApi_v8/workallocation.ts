@@ -354,7 +354,12 @@ workAllocationApi.get('/getWOPdf/:workOrderId', async (req, res) => {
             API_END_POINTS.getPdf(workOrderId),
             {
                 ...axiosRequestConfig,
-                headers: req.headers,
+                headers: {
+                    Accept: 'application/pdf',
+
+                },
+                responseType: 'arraybuffer',
+
             }
         )
         res.status(response.status).send(response.data)

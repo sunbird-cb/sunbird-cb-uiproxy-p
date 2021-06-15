@@ -20,7 +20,12 @@ workallocationPublic.get('/getWaPdf/:waId', async (req, res) => {
             },
             responseType: 'arraybuffer',
         })
-        res.status(response.status).send(response.data)
+        const blob = new Blob([response.data], { type: 'application/pdf' })
+        const link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        link.download = 'workAlloctionReport.pdf'
+        link.click()
+        // res.status(response.status).send(response.data)
     } catch (err) {
         logError(err)
         res.status((err && err.response && err.response.status) || 500).send(

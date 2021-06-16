@@ -1,15 +1,16 @@
 import axios from 'axios'
 import { Router } from 'express'
 import { axiosRequestConfig } from '../configs/request.config'
-import { logError } from '../utils/logger'
+import { logError, logInfo } from '../utils/logger'
 import { ERROR } from '../utils/message'
 
 export const workallocationPublic = Router()
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 workallocationPublic.get('/getWaPdf/:waId', async (req, res) => {
     try {
-
+        
+        const waId = req.params.waId
+        logInfo(waId);
         // tslint:disable-next-line:max-line-length
         const response = await axios.get('https://igot.blob.core.windows.net/content/content/do_11330192015047884813390/artifact/do_11330192015047884813390_1623769549639_8241d6ac-14d4-409a-ac54-bad5c482a735-1623769548941_workallocationpublished.pdf', {
             ...axiosRequestConfig,

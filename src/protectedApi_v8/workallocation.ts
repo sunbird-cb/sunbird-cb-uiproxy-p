@@ -20,6 +20,7 @@ const API_END_POINTS = {
     getWorkOrderById: (path: string, id: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/getWorkOrderById/${id}`,
     getWorkOrders: (path: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/getWorkOrders`,
     updateAllocationEndPoint: `${CONSTANTS.SB_EXT_API_BASE_2}/v1/workallocation/update`,
+    updateWorkAllocationEndPoint: (path: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/update`,
     updateWorkOrder: (path: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/${path}/update/workorder`,
     userAutoCompleteEndPoint: (searchTerm: string) =>
     `${CONSTANTS.SB_EXT_API_BASE_2}/v1/workallocation/users/autocomplete?searchTerm=${searchTerm}`,
@@ -143,6 +144,35 @@ workAllocationApi.post('/v2/add', async (req, res) => {
         }
         const response = await axios.post(
             API_END_POINTS.addAllocationEndPoint(workallocationV2Path),
+            req.body,
+            {
+                ...axiosRequestConfig,
+                headers: {
+                    Authorization: req.header('Authorization'),
+                    userId,
+                },
+            }
+        )
+        res.status(response.status).send(response.data)
+    } catch (err) {
+        logError(Error + err)
+        res.status((err && err.response && err.response.status) || 500).send(
+            (err && err.response && err.response.data) || {
+                error: ERROR.GENERAL_ERR_MSG,
+            }
+        )
+    }
+})
+
+workAllocationApi.post('/v2/update', async (req, res) => {
+    try {
+        const userId = extractUserIdFromRequest(req)
+        if (!userId) {
+            res.status(400).send(userIdFailedMessage)
+            return
+        }
+        const response = await axios.post(
+            API_END_POINTS.updateWorkAllocationEndPoint(workallocationV2Path),
             req.body,
             {
                 ...axiosRequestConfig,

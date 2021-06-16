@@ -6,7 +6,7 @@ import { ERROR } from '../utils/message'
 
 export const workallocationPublic = Router()
 
-// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 workallocationPublic.get('/getWaPdf/:waId', async (req, res) => {
     try {
 

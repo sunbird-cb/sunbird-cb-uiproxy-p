@@ -1,22 +1,17 @@
 import axios from 'axios'
 import { Router } from 'express'
 import { axiosRequestConfig } from '../configs/request.config'
-import { CONSTANTS } from '../utils/env'
 import { logError } from '../utils/logger'
 import { ERROR } from '../utils/message'
 
-  /* tslint:disable:no-unused-variable */
-const API_END_POINTS = {
-    getWAPdf: (waId: string) => `${CONSTANTS.SB_EXT_API_BASE_2}/getWOPublishedPdf/${waId}`,
-}
+
 
 export const workallocationPublic = Router()
 
 workallocationPublic.get('/getWaPdf/:waId', async (req, res) => {
     try {
-        
-        /* tslint:disable:no-unused-variable */
-        const waId = req.params.waId
+
+    
         // tslint:disable-next-line:max-line-length
         const response = await axios.get('https://igot.blob.core.windows.net/content/content/do_11330192015047884813390/artifact/do_11330192015047884813390_1623769549639_8241d6ac-14d4-409a-ac54-bad5c482a735-1623769548941_workallocationpublished.pdf', {
             ...axiosRequestConfig,

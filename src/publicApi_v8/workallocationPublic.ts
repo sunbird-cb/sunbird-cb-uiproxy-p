@@ -6,7 +6,7 @@ import { ERROR } from '../utils/message'
 
 export const workallocationPublic = Router()
 
-/* tslint:disable:no-unused-variable */
+// tslint:disable:no-unused-variable
 workallocationPublic.get('/getWaPdf/:waId', async (req, res) => {
     try {
 

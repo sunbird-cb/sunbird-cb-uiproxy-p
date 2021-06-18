@@ -18,7 +18,7 @@ workallocationPublic.get('/getWaPdf/:waId', async (req, res) => {
             headers: {},
         })
         logInfo('Response ========>', JSON.stringify(response.data))
-        window.open(response.data)
+        res.json(response.data)
     } catch (err) {
         logError(err)
         res.status((err && err.response && err.response.status) || 500).send(

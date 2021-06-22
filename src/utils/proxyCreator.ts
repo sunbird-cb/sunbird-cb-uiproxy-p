@@ -53,7 +53,11 @@ proxy.on('proxyRes', (proxyRes: any, req: any, _res: any, ) => {
       tempBody.push(chunk)
         })
        proxyRes.on('end', () => {
+         // tslint:disable-next-line: no-console
+          console.log('TempBody = ', tempBody)
           const tempdata = tempBody.toString()
+          // tslint:disable-next-line: no-console
+          console.log('TempData = ', tempdata)
           const updateRes = returnData(JSON.parse(tempdata), null, 'hierarchy')
           _res.end(JSON.stringify(updateRes))
       })

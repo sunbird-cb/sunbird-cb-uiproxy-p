@@ -10,7 +10,7 @@ import { extractUserIdFromRequest, extractUserToken } from '../../utils/requestE
 
 const API_END_POINTS = {
     createOSUserRegistry: (userId: string) => `${CONSTANTS.NETWORK_HUB_SERVICE_BACKEND}/v1/user/create/profile?userId=${userId}`,
-    createSb: `${CONSTANTS.LEARNER_SERVICE_API_BASE}/v3/user/create`,
+    createSb: `${CONSTANTS.KONG_API_BASE}/user/v3/create`,
     createUserRegistry: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/createUserRegistry`,
     getMasterLanguages: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getMasterLanguages`,
     getMasterNationalities: `${CONSTANTS.USER_PROFILE_API_BASE}/public/v8/profileDetails/getMasterNationalities`,

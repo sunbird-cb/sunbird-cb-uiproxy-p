@@ -232,6 +232,11 @@ profileDeatailsApi.post('/createUser', async (req, res) => {
             const response = await axios({
                 ...axiosRequestConfig,
                 data: { request: sbUserProfile },
+                headers: {
+                    Authorization: CONSTANTS.SB_API_KEY,
+                    // tslint:disable-next-line: all
+                    'x-authenticated-user-token': extractUserToken(req),
+                },
                 method: 'POST',
                 url: API_END_POINTS.createSb,
             })
@@ -363,6 +368,11 @@ profileDeatailsApi.post('/createUserV2WithRegistry', async (req, res) => {
             const response = await axios({
                 ...axiosRequestConfig,
                 data: { request: sbUserProfile },
+                headers: {
+                    Authorization: CONSTANTS.SB_API_KEY,
+                    // tslint:disable-next-line: all
+                    'x-authenticated-user-token': extractUserToken(req),
+                },
                 method: 'POST',
                 url: API_END_POINTS.createSb,
             })
@@ -446,6 +456,11 @@ profileDeatailsApi.post('/createUserV2WithoutRegistry', async (req, res) => {
             const response = await axios({
                 ...axiosRequestConfig,
                 data: { request: sbUserProfile },
+                headers: {
+                    Authorization: CONSTANTS.SB_API_KEY,
+                    // tslint:disable-next-line: all
+                    'x-authenticated-user-token': extractUserToken(req),
+                },
                 method: 'POST',
                 url: API_END_POINTS.createSb,
             })

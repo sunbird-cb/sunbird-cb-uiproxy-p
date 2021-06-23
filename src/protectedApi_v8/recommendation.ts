@@ -265,7 +265,7 @@ recommendationApi.get('/:recommendationType', async (req, res) => {
     const url = `${API_END_POINTS.recommendations}/${extractUserIdFromRequest(req)}/recommendations/${recommendationType}`
     if (recommendationType === 'latest') {
       params.learningMode = 'Self-Paced'
-      if (rootOrg === 'Infosys' && org === 'Infosys Ltd') {
+      if (rootOrg === 'iGOT' && org === 'iGOT Ltd') {
         // tslint:disable-next-line: max-line-length
         params.excludeContentType = `${EContentTypes.KNOWLEDGE_ARTIFACT},${EContentTypes.RESOURCE},${EContentTypes.MODULE},${EContentTypes.CHANNEL}`
       } else {

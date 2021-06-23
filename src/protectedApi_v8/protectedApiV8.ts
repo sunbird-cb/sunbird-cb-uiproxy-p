@@ -16,7 +16,6 @@ import { discussionHubApi } from './discussionHub/discussionHub'
 import { externalEventsApi } from './event-external'
 import { eventsApi } from './events'
 import {  fracApi } from './frac'
-import { infyRadioApi } from './infyradio'
 import { knowledgeHubApi } from './khub'
 import { leaderBoardApi } from './leaderboard'
 import { navigatorApi } from './navigator'
@@ -52,7 +51,6 @@ protectedApiV8.use('/content', contentApi)
 protectedApiV8.use('/profanity', contentValidationApi)
 protectedApiV8.use('/counter', counterApi)
 protectedApiV8.use('/discussionHub', discussionHubApi)
-protectedApiV8.use('/infyradio', infyRadioApi)
 protectedApiV8.use('/khub', knowledgeHubApi)
 protectedApiV8.use('/leaderboard', leaderBoardApi)
 protectedApiV8.use('/navigator', navigatorApi)

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { format as formatDate } from 'date-fns'
 import { Request, Response, Router } from 'express'
-import { IFeedbackTraining, IInfyJLStatus, IJITForm, IJITRequest, ITraining, ITrainingApiResponse, ITrainingCounts, ITrainingFeedbackQuestion, ITrainingRequest, ITrainingSession, ITrainingShareBody, ITrainingUserPrivileges } from '../models/training.model'
+import { IFeedbackTraining, IIGOTJLStatus, IJITForm, IJITRequest, ITraining, ITrainingApiResponse, ITrainingCounts, ITrainingFeedbackQuestion, ITrainingRequest, ITrainingSession, ITrainingShareBody, ITrainingUserPrivileges } from '../models/training.model'
 import { IUserAutocomplete } from '../models/user.model'
 import { CONSTANTS } from '../utils/env'
 import { getDateRangeString, getEmailLocalPart, getStringifiedQueryParams } from '../utils/helpers'
@@ -483,7 +483,7 @@ trainingApi.get('/userInfo', async (req: Request, res: Response) => {
     const emailId = getEmailLocalPart(extractUserEmailFromRequest(req))
 
     const isJL6OrAbove: ITrainingUserPrivileges = await axios
-      .get<IInfyJLStatus>(`${apiEndpoints.training}/users/${emailId}`)
+      .get<IIGOTJLStatus>(`${apiEndpoints.training}/users/${emailId}`)
       .then((response) => ({
         canNominate: response.data.isJL6AndAbove || false,
         canRequestJIT: response.data.isJL6AndAbove || false,

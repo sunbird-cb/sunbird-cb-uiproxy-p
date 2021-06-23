@@ -10,15 +10,12 @@
     "prebuild": "npm run lint",
     "scan": "gulp scan",
     "serve": "node ./index.js",
-    "start:wsd": "nodemon --config nodemon/nodemon-wsd.json",
-    "start:ws-stage": "nodemon --config nodemon/nodemon-ws-stage.json",
-    "start:siemens-stage": "nodemon --config nodemon/nodemon-siemens-stage.json",
     "start:nodemon": "nodemon --config nodemon/nodemon.json",
     "start:igot": "nodemon --config nodemon/nodemon-igot-stage.json",
     "start": "node index.js"
   },
   "keywords": [],
-  "author": "Sujeet Kumar Jaiswal<Sujeet_Jaiswal@infosys.com>",
+  "author": "Christopher Fernandes",
   "license": "ISC",
   "dependencies": {
     "@types/cors": "^2.8.6",

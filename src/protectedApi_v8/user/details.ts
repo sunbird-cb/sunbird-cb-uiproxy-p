@@ -9,7 +9,6 @@ import { extractUserIdFromRequest } from '../../utils/requestExtract'
 import { getUserByEmail } from '../discussionHub/users'
 import { createDiscussionHubUser } from '../discussionHub/writeApi'
 import { getRoles , getUserStatus} from '../portal-v3'
-import { getUserProfile } from './profile'
 import { getProfileStatus } from './profile-registry'
 
 export const detailsApi = Router()
@@ -181,18 +180,6 @@ export function wTokenApiMock(req: any, token: any): Promise<any> {
     }
   })
 }
-
-detailsApi.get('/infosys', async (req, res) => {
-  try {
-    const userId = extractUserIdFromRequest(req)
-    const userProfile = await getUserProfile(userId, req)
-    res.json({
-      userProfile,
-    })
-  } catch (err) {
-    res.status((err && err.response && err.response.status) || 500).send(err)
-  }
-})
 
 detailsApi.post('/managerDetails', async (req, res) => {
   try {

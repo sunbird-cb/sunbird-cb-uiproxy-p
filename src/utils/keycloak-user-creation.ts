@@ -188,7 +188,6 @@ export async function UpdateKeycloakUserPassword(keycloakId: string, isTemporary
     //     temporary: false,
     // }
     // return await axios.put(
-    //     // `https://eagle-keycloak.idc.tarento.com/wingspan/users/${response.id}/reset-password`,
     //     `${CONSTANTS.HTTPS_HOST}/auth/admin/realms/${CONSTANTS.KEYCLOAK_REALM}/users/${keycloakId}/reset-password`,
     //     request1,
     //     {

@@ -45,7 +45,7 @@ async function sharePlaylist(
   auth: any
 ) {
   /* for sharing a playlist with another user */
-  const url = `https://igot-sunbird.idc.tarento.com/apis/proxies/v8/action/content/v3/update/${playlistId}`
+  const url = `https://igot-dev.in/apis/proxies/v8/action/content/v3/update/${playlistId}`
   const body = {
     request: {
       content: {
@@ -418,7 +418,7 @@ playlistApi.patch('/:playlistId', async (req, res) => {
       return
     }
     const playlistId = req.params.playlistId
-    const url = `https://igot-sunbird.idc.tarento.com/apis/proxies/v8/action/content/v3/update/${playlistId}`
+    const url = `https://igot-dev.in/apis/proxies/v8/action/content/v3/update/${playlistId}`
     const response = await axios({
       ...axiosRequestConfig,
       data: formPlaylistupdateObj(request),
@@ -431,7 +431,7 @@ playlistApi.patch('/:playlistId', async (req, res) => {
       url,
     })
 
-    const urll = `https://igot-sunbird.idc.tarento.com/apis/proxies/v8/action/content/v3/hierarchy/update`
+    const urll = `https://igot-dev.in/apis/proxies/v8/action/content/v3/hierarchy/update`
 
     const response1 = await axios({
       ...axiosRequestConfig,
@@ -468,7 +468,7 @@ playlistApi.post('/create', async (req, res) => {
       res.status(400).send(ERROR.ERROR_NO_ORG_DATA)
       return
     }
-    const url = `https://igot-sunbird.idc.tarento.com/apis/proxies/v8/action/content/v3/create`
+    const url = `https://igot-dev.in/apis/proxies/v8/action/content/v3/create`
     const response = await axios({
       ...axiosRequestConfig,
       data: formPlaylistRequestObj(request, userId, userName),
@@ -481,7 +481,7 @@ playlistApi.post('/create', async (req, res) => {
       url,
     })
 
-    const urll = `https://igot-sunbird.idc.tarento.com/apis/proxies/v8/action/content/v3/hierarchy/update`
+    const urll = `https://igot-dev.in/apis/proxies/v8/action/content/v3/hierarchy/update`
 
     const response1 = await axios({
       ...axiosRequestConfig,
@@ -519,7 +519,7 @@ playlistApi.post('/:playlistId/:type', async (req, res) => {
     const type = req.params.type
     const playlistId = req.params.playlistId
 
-    const url = `https://igot-sunbird.idc.tarento.com/apis/proxies/v8/action/content/v3/hierarchy/${playlistId}?mode=edit`
+    const url = `https://igot-dev.in/apis/proxies/v8/action/content/v3/hierarchy/${playlistId}?mode=edit`
     const response1 = await axios({
       ...axiosRequestConfig,
       headers: {
@@ -531,7 +531,7 @@ playlistApi.post('/:playlistId/:type', async (req, res) => {
       url,
     })
 
-    const urll = `https://igot-sunbird.idc.tarento.com/apis/proxies/v8/action/content/v3/hierarchy/update`
+    const urll = `https://igot-dev.in/apis/proxies/v8/action/content/v3/hierarchy/update`
 
     const hierarchy = {}
     const childern = response1.data.result.content.childNodes

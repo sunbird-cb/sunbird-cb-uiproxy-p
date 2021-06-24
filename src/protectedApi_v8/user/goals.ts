@@ -78,7 +78,7 @@ goalsApi.post('/', async (req, res) => {
       return
     }
     const auth = req.header('Authorization')
-    const url = `https://igot-sunbird.idc.tarento.com/apis/proxies/v8/action/content/v3/create`
+    const url = `https://igot-dev.in/apis/proxies/v8/action/content/v3/create`
     const response = await axios({
       ...axiosRequestConfig,
       data: formGoalRequestObj(req.body, userId),
@@ -91,7 +91,7 @@ goalsApi.post('/', async (req, res) => {
       url,
     })
 
-    const urll = `https://igot-sunbird.idc.tarento.com/apis/proxies/v8/action/content/v3/hierarchy/update`
+    const urll = `https://igot-dev.in/apis/proxies/v8/action/content/v3/hierarchy/update`
 
     const response1 = await axios({
       ...axiosRequestConfig,
@@ -126,7 +126,7 @@ goalsApi.patch('/:goalId', async (req, res) => {
       return
     }
     const goalId = req.params.goalId
-    const url = `https://igot-sunbird.idc.tarento.com/apis/proxies/v8/action/content/v3/update/${goalId}`
+    const url = `https://igot-dev.in/apis/proxies/v8/action/content/v3/update/${goalId}`
     const response = await axios({
       ...axiosRequestConfig,
       data: formPlaylistupdateObj(request),
@@ -139,7 +139,7 @@ goalsApi.patch('/:goalId', async (req, res) => {
       url,
     })
 
-    const urll = `https://igot-sunbird.idc.tarento.com/apis/proxies/v8/action/content/v3/hierarchy/update`
+    const urll = `https://igot-dev.in/apis/proxies/v8/action/content/v3/hierarchy/update`
 
     const response1 = await axios({
       ...axiosRequestConfig,

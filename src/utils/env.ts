@@ -143,10 +143,13 @@ export const CONSTANTS = {
   NOTIFY_SEND_FOR_PUBLISH_BODY: 'You have received request to publish the content #contentLink',
   NOTIFY_PUBLIST_FAILED: 'The content #contentLink which sent for publish requires few more changes. Please contact the publishers.',
   NOTIFY_PUBLISH_COMPLETED_BODY: 'The content #contentLink is successfully published.' +
-  ' The content will be available for the users in few hours.',
+    ' The content will be available for the users in few hours.',
   NOTIFY_EMAIL_TEMPLATE_ID: 'emailtemplate',
   CONTENT_SERVICE_API_BASE: env.CONTENT_SERVICE_API_BASE || 'http://content-service:9000',
   VM_LEARNING_SERVICE_URL: env.VM_LEARNING_SERVICE_URL,
+  // tslint:disable-next-line: max-line-length
+  CERT_AUTH_TOKEN: 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRekw4VVA1dUtqUFdaZVpMd1ZtTFJvNHdqWTg2a2FrcSJ9.TPjV0xLacSbp3FbJ7XeqHoKFN35Rl4YHx3DZNN9pm0o',
+
 }
 
 export const RESTRICTED_PYTHON_STMT: string[] = process.env.RESTRICTED_CHARACTERS

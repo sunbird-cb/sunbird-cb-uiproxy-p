@@ -122,7 +122,7 @@ export interface IFeedbackTraining {
   date_range?: string
 }
 
-export interface IInfyJLStatus {
+export interface IIGOTJLStatus {
   isJL7AndAbove: boolean
   isJL6AndAbove: boolean
   manager: string

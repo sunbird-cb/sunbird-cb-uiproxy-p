@@ -7,7 +7,7 @@ import { ISearchResponse } from './../models/response/search-model'
 export const fetchTranslatedContents = async (
   query: string,
   uuid: string,
-  rootOrg = 'Infosys'
+  rootOrg = 'iGOT'
 ): Promise<string[]> => {
   // Generating search request body
   const searchBody = {

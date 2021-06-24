@@ -4,7 +4,7 @@ import { Router } from 'express'
 import { UploadedFile } from 'express-fileupload'
 import { axiosRequestConfig } from '../configs/request.config'
 import { ICertificationUserPrivileges } from '../models/certification.model'
-import { IInfyJLStatus } from '../models/training.model'
+import { IIGOTJLStatus } from '../models/training.model'
 import { CONSTANTS } from '../utils/env'
 import { getEmailLocalPart } from '../utils/helpers'
 import { extractUserEmailFromRequest } from '../utils/requestExtract'
@@ -603,7 +603,7 @@ certificationApi.get('/defaultProctor', async (req, res) => {
 // FUNCTIONS
 const getCertificationUserPrivileges = async (emailId: string) => {
   return axios
-    .get<IInfyJLStatus>(`${apiEndpoints.trainings}/users/${emailId}`)
+    .get<IIGOTJLStatus>(`${apiEndpoints.trainings}/users/${emailId}`)
     .then((response) => response.data)
     .then(
       (userData) =>

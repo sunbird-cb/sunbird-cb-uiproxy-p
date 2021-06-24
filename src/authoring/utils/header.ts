@@ -12,9 +12,9 @@ export const getHeaders = (req: Request) => {
 }
 
 export const getOrg = (req: Request): string => {
-  return req.header('org') || 'Infosys Ltd'
+  return req.header('org') || 'iGOT Ltd'
 }
 
 export const getRootOrg = (req: Request): string => {
-  return req.header('rootOrg') || 'Infosys'
+  return req.header('rootOrg') || 'iGOT'
 }
